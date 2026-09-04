@@ -1,0 +1,287 @@
+ 
+:root {
+  /* Color */
+  --color-bg: #eef1f4;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f6f8fa;
+  --color-border: #d7dde3;
+  --color-ink: #16232f;
+  --color-ink-muted: #55636f;
+  --color-navy: #16324f;
+  --color-navy-dark: #0f2338;
+  --color-teal: #1f7a6c;
+  --color-teal-dark: #175e53;
+  --color-amber: #a6660b;
+  --color-amber-bg: #fbf1de;
+  --color-red: #a3312a;
+  --color-red-bg: #fbeceb;
+  --color-neutral-bg: #eef2f1;
+ 
+  /* Type */
+  --font-body: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+ 
+  /* Layout */
+  --radius: 6px;
+  --shadow-card: 0 1px 2px rgba(16, 35, 56, 0.06), 0 1px 1px rgba(16, 35, 56, 0.04);
+  --content-width: 1080px;
+  --gap: 20px;
+}
+ 
+* {
+  box-sizing: border-box;
+}
+ 
+html {
+  font-size: 16px;
+}
+ 
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-header {
+  background-color: var(--color-navy);
+  color: #ffffff;
+  padding: 32px max(24px, calc((100% - var(--content-width)) / 2));
+  border-bottom: 3px solid var(--color-teal);
+}
+ 
+.app-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+ 
+.app-description {
+  margin: 0;
+  max-width: 68ch;
+  color: #c7d2db;
+  font-size: 0.95rem;
+}
+
+ 
+.app-main {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 28px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+ 
+section h2 {
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-navy-dark);
+}
+
+.upload-section {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+}
+ 
+.upload-form {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+ 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 320px;
+}
+ 
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+}
+ 
+#csv-file-input {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface-alt);
+  padding: 14px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-ink-muted);
+}
+ 
+#csv-file-input:hover {
+  border-color: var(--color-teal);
+}
+ 
+#csv-file-input::file-selector-button {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  padding: 6px 12px;
+  margin-right: 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+ 
+/* Buttons */
+ 
+.btn {
+  border-radius: var(--radius);
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+ 
+.btn-primary {
+  background-color: var(--color-teal);
+  color: #ffffff;
+}
+ 
+.btn-primary:hover {
+  background-color: var(--color-teal-dark);
+}
+ 
+.btn-secondary {
+  background-color: var(--color-surface);
+  color: var(--color-navy-dark);
+  border-color: var(--color-border);
+}
+ 
+.btn-secondary:hover {
+  border-color: var(--color-navy);
+}
+
+.results-section {
+  background-color: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+ 
+.results-section > h2 {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+ 
+.result-block {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-navy);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 18px 20px;
+  margin-top: 16px;
+}
+ 
+.result-block h3 {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-navy-dark);
+}
+
+.placeholder-text {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+ 
+/* Emphasize the top-level risk status as the primary read of the page */
+#risk-status {
+  margin-top: 0;
+  border-left-color: var(--color-teal);
+  background-color: var(--color-neutral-bg);
+}
+ 
+#risk-status h3 {
+  font-size: 1rem;
+}
+
+risk-state--normal {
+  border-left-color: var(--color-teal);
+  background-color: var(--color-neutral-bg);
+}
+ 
+.risk-state--limited {
+  border-left-color: var(--color-amber);
+  background-color: var(--color-amber-bg);
+}
+ 
+.risk-state--review {
+  border-left-color: var(--color-red);
+  background-color: var(--color-red-bg);
+}
+ 
+/* Data-leaning blocks read more clearly in a tabular/mono face */
+#transactions-of-interest,
+#customer-baseline {
+  font-family: var(--font-body);
+}
+ 
+#transactions-of-interest .placeholder-text,
+#customer-baseline .placeholder-text {
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 0.85rem;
+}
+
+
+.app-footer {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 24px 32px;
+}
+ 
+.disclaimer {
+  margin: 0;
+  padding: 14px 18px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-ink-muted);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+ 
+@media (max-width: 720px) {
+  .app-header {
+    padding: 24px 16px;
+  }
+ 
+  .app-main {
+    padding: 20px 16px 32px;
+  }
+ 
+  .upload-form {
+    align-items: stretch;
+  }
+ 
+  .form-actions {
+    flex-direction: column;
+  }
+}
