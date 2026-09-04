@@ -16,13 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     investigatorPriority: document.getElementById("investigator-priority"),
   };
 
-/* ---- State ---- */
-  // dataSource is null, "file", or "sample" — tracks whether Analyze has
-  // something to work with, without ever holding real parsed data.
+
   let dataSource = null;
- 
-  /* ---- Small helper: a status line under the file input, created here
-     so no HTML changes are required. Reused for filename + messages. ---- */
+
   const fileStatus = document.createElement("p");
   fileStatus.id = "file-status";
   fileStatus.className = "placeholder-text";
@@ -59,22 +55,53 @@ function resetAllResults() {
     }
   }
 
-/* ---- Mock result rendering ---- */
-  function renderMockResults() {
+  /* ---- Backend result rendering ---- */
+  function renderBackendResult(message) {
     const text = resultBlocks.riskStatus.querySelector(".placeholder-text");
     if (text) {
-      text.textContent =
-        "Demo Result — Analysis pipeline is connected to the frontend. " +
-        "Backend integration will be added in the next phase.";
+      text.textContent = message;
     }
- 
-    const mockNote = "Pipeline connected (mock data placeholder — no backend result yet).";
-    resetResultBlock(resultBlocks.riskIndicators, mockNote);
-    resetResultBlock(resultBlocks.transactionsOfInterest, mockNote);
-    resetResultBlock(resultBlocks.customerBaseline, mockNote);
-    resetResultBlock(resultBlocks.investigationSummary, mockNote);
-    resetResultBlock(resultBlocks.investigatorPriority, mockNote);
   }
+
+  function renderError(message) {
+    const text = resultBlocks.riskStatus.querySelector(".placeholder-text");
+    if (text) {
+      text.textContent = `Unable to complete analysis: ${message}`;
+    }
+  }
+
+  /* ---- Event: Analyze Transactions ---- */
+  uploadForm.addEventListener("submit", (event) => {
+    event.preventDefault(); // handled entirely via fetch below, not a page submit
+
+    if (!dataSource) {
+      setFileStatus("Please select a CSV file or load the sample customer before analyzing.");
+      return;
+    }
+
+    setLoadingState(true);
+
+    fetch("/api/analyze/", { method: "POST" })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Server responded with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.status !== "success" || !data.message) {
+          throw new Error("Unexpected response from server.");
+        }
+        renderBackendResult(data.message);
+      })
+      .catch((error) => {
+        renderError(error.message);
+      })
+      .finally(() => {
+        setLoadingState(false);
+      });
+  });
+
  
   /* ---- Event: file selected ---- */
   fileInput.addEventListener("change", () => {
@@ -88,33 +115,6 @@ function resetAllResults() {
       setFileStatus("No file selected.");
     }
   });
- 
-  /* ---- Event: Load Sample Customer ---- */
-  loadSampleBtn.addEventListener("click", () => {
-    dataSource = "sample";
-    fileInput.value = ""; // clear any chosen file so state stays unambiguous
-    setFileStatus("Sample customer selected (demo data — not a real record).");
-  });
- 
-  /* ---- Event: Analyze Transactions ---- */
-  uploadForm.addEventListener("submit", (event) => {
-    event.preventDefault(); // no network request; this is a local mock action
- 
-    if (!dataSource) {
-      setFileStatus("Please select a CSV file or load the sample customer before analyzing.");
-      return;
-    }
- 
-    setLoadingState(true);
- 
-    // Simulated delay so the loading state is visible and reusable later
-    // when Phase 4 replaces this with a real request.
-    setTimeout(() => {
-      setLoadingState(false);
-      renderMockResults();
-    }, 900);
-  });
- 
   /* ---- Initial state ---- */
   resetAllResults();
   setFileStatus("No file selected.");
