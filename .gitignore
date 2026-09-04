@@ -1,0 +1,7 @@
+#block off the api key, don't push it ever!
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
