@@ -244,8 +244,7 @@ risk-state--normal {
  
 #transactions-of-interest .placeholder-text,
 #customer-baseline .placeholder-text {
-  font-family: var(--font-mono);
-  font-style: normal;
+  font-family: var(--font-body);
   font-size: 0.85rem;
 }
 
