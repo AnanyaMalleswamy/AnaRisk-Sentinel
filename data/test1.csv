@@ -1,0 +1,4 @@
+transaction_id,customer_id,date,description,payee,amount,channel
+T001,C01,2026-01-05,Monthly grocery purchase,Fresh Mart,850.00,UPI
+T002,C01,2026-01-08,Electricity bill,Power Company,1200.00,ONLINE
+T003,C01,2026-01-15,Salary credit,ABC Corp,45000.00,BANK_TRANSFER

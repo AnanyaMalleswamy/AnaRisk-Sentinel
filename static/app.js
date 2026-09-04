@@ -1,4 +1,4 @@
-javascript
+
 document.addEventListener("DOMContentLoaded", () => {
   // ---- Cache DOM elements ----
   const fileInput = document.getElementById("csv-file-input");
