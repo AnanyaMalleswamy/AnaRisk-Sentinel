@@ -62,3 +62,54 @@ def parse_transactions_csv(file_obj):
         raise CSVValidationError("The CSV file contains no transaction rows.")
 
     return transactions
+def _parse_row(row, row_number):
+    errors = []
+
+    transaction_id = (row.get("transaction_id") or "").strip()
+    if not transaction_id:
+        errors.append(f"Row {row_number}: missing transaction_id")
+
+    customer_id = (row.get("customer_id") or "").strip()
+    if not customer_id:
+        errors.append(f"Row {row_number}: missing customer_id")
+
+    date_str = (row.get("date") or "").strip()
+    parsed_date = None
+    if not date_str:
+        errors.append(f"Row {row_number}: missing date")
+    else:
+        try:
+            parsed_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            errors.append(f"Row {row_number}: invalid date '{date_str}' (expected YYYY-MM-DD)")
+
+    description = (row.get("description") or "").strip()
+    payee = (row.get("payee") or "").strip()
+
+    amount_str = (row.get("amount") or "").strip()
+    amount = None
+    if not amount_str:
+        errors.append(f"Row {row_number}: missing amount")
+    else:
+        try:
+            amount = float(amount_str)
+        except ValueError:
+            errors.append(f"Row {row_number}: invalid amount '{amount_str}'")
+
+    channel = (row.get("channel") or "").strip()
+    if not channel:
+        errors.append(f"Row {row_number}: missing channel")
+
+    if errors:
+        return None, errors
+
+    transaction = {
+        "transaction_id": transaction_id,
+        "customer_id": customer_id,
+        "date": parsed_date.isoformat(),
+        "description": description,
+        "payee": payee,
+        "amount": amount,
+        "channel": channel,
+    }
+    return transaction, []
