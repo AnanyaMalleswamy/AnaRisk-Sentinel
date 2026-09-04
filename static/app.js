@@ -76,7 +76,7 @@ function resetAllResults() {
     resetResultBlock(resultBlocks.customerBaseline, "Baseline calculation not implemented in this phase.");
     resetResultBlock(resultBlocks.investigationSummary, "CSV parsing verified. Investigation summary not implemented in this phase.");
   }
-  
+
   function renderError(message) {
     const text = resultBlocks.riskStatus.querySelector(".placeholder-text");
     if (text) {
@@ -86,7 +86,41 @@ function resetAllResults() {
 
   /* ---- Event: Analyze Transactions ---- */
   uploadForm.addEventListener("submit", (event) => {
-    event.preventDefault(); // handled entirely via fetch below, not a page submit
+    event.preventDefault();
+
+    if (dataSource === "sample") {
+      setFileStatus("Sample customer mode doesn't send a real file yet — please select a CSV file to parse.");
+      return;
+    }
+
+    if (dataSource !== "file" || !fileInput.files[0]) {
+      setFileStatus("Please select a CSV file before analyzing.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    setLoadingState(true);
+
+    fetch("/api/analyze/", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok || data.status !== "success") {
+          throw new Error(data.message || "Unexpected response from server.");
+        }
+        renderBackendResult(data);
+      })
+      .catch((error) => {
+        renderError(error.message);
+      })
+      .finally(() => {
+        setLoadingState(false);
+      });
+  });
 
     if (!dataSource) {
       setFileStatus("Please select a CSV file or load the sample customer before analyzing.");
@@ -120,7 +154,7 @@ function resetAllResults() {
       .finally(() => {
         setLoadingState(false);
       });
-  });
+  
 
  
   /* ---- Event: file selected ---- */
@@ -138,4 +172,4 @@ function resetAllResults() {
   /* ---- Initial state ---- */
   resetAllResults();
   setFileStatus("No file selected.");
-});  
+}); 
