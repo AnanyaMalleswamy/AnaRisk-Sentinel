@@ -58,3 +58,64 @@ function resetAllResults() {
       resetResultBlock(resultBlocks.riskStatus, "Analysis in progress...");
     }
   }
+
+/* ---- Mock result rendering ---- */
+  function renderMockResults() {
+    const text = resultBlocks.riskStatus.querySelector(".placeholder-text");
+    if (text) {
+      text.textContent =
+        "Demo Result — Analysis pipeline is connected to the frontend. " +
+        "Backend integration will be added in the next phase.";
+    }
+ 
+    const mockNote = "Pipeline connected (mock data placeholder — no backend result yet).";
+    resetResultBlock(resultBlocks.riskIndicators, mockNote);
+    resetResultBlock(resultBlocks.transactionsOfInterest, mockNote);
+    resetResultBlock(resultBlocks.customerBaseline, mockNote);
+    resetResultBlock(resultBlocks.investigationSummary, mockNote);
+    resetResultBlock(resultBlocks.investigatorPriority, mockNote);
+  }
+ 
+  /* ---- Event: file selected ---- */
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+ 
+    if (file) {
+      dataSource = "file";
+      setFileStatus(`Selected file: ${file.name}`);
+    } else {
+      dataSource = null;
+      setFileStatus("No file selected.");
+    }
+  });
+ 
+  /* ---- Event: Load Sample Customer ---- */
+  loadSampleBtn.addEventListener("click", () => {
+    dataSource = "sample";
+    fileInput.value = ""; // clear any chosen file so state stays unambiguous
+    setFileStatus("Sample customer selected (demo data — not a real record).");
+  });
+ 
+  /* ---- Event: Analyze Transactions ---- */
+  uploadForm.addEventListener("submit", (event) => {
+    event.preventDefault(); // no network request; this is a local mock action
+ 
+    if (!dataSource) {
+      setFileStatus("Please select a CSV file or load the sample customer before analyzing.");
+      return;
+    }
+ 
+    setLoadingState(true);
+ 
+    // Simulated delay so the loading state is visible and reusable later
+    // when Phase 4 replaces this with a real request.
+    setTimeout(() => {
+      setLoadingState(false);
+      renderMockResults();
+    }, 900);
+  });
+ 
+  /* ---- Initial state ---- */
+  resetAllResults();
+  setFileStatus("No file selected.");
+});  
