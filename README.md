@@ -1,4 +1,4 @@
-# GenAI Nexus Hackathon
+TRACK_ID=PS06
 
 ## Project
 To be decided after problem statement release.
