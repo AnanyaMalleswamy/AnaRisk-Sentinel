@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from analyzer.services.parser import CSVValidationError, parse_transactions_csv
 # Create your views here.
 def index(request):
     return render(request, "index.html")
@@ -10,24 +10,25 @@ from django.views.decorators.http import require_POST
 
 @require_POST
 def analyze(request):
-    """Temporary mock investigation response. No real analysis logic here."""
-    mock_response = {
+    """Parses and validates the uploaded CSV. No risk logic yet."""
+    uploaded_file = request.FILES.get("file")
+
+    if not uploaded_file:
+        return JsonResponse(
+            {"status": "error", "message": "No file was uploaded."},
+            status=400,
+        )
+
+    try:
+        transactions = parse_transactions_csv(uploaded_file)
+    except CSVValidationError as exc:
+        return JsonResponse(
+            {"status": "error", "message": str(exc)},
+            status=400,
+        )
+
+    return JsonResponse({
         "status": "success",
-        "classification": "REVIEW_RECOMMENDED",
-        "message": "Mock investigation completed",
-        "findings": [
-            {
-                "rule": "UNUSUALLY_LARGE_TRANSACTION",
-                "severity": "HIGH",
-                "transaction_id": "T004",
-                "explanation": "Transaction amount is significantly above the customer's typical activity.",
-            },
-            {
-                "rule": "RAPID_SUCCESSION_TRANSFERS",
-                "severity": "MEDIUM",
-                "transaction_id": "T007",
-                "explanation": "Multiple transfers occurred within a short time window.",
-            },
-        ],
-    }
-    return JsonResponse(mock_response)
+        "transaction_count": len(transactions),
+        "preview": transactions[:5],
+    })
