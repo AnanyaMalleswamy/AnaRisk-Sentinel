@@ -39,4 +39,22 @@ document.addEventListener("DOMContentLoaded", () => {
       text.textContent = message;
     }
   }
-    
+  
+function resetAllResults() {
+    resetResultBlock(resultBlocks.riskStatus, "Analysis has not been run yet.");
+    resetResultBlock(resultBlocks.riskIndicators, "Risk indicators will appear here after analysis.");
+    resetResultBlock(resultBlocks.transactionsOfInterest, "Flagged transactions will appear here after analysis.");
+    resetResultBlock(resultBlocks.customerBaseline, "Baseline behavior summary will appear here after analysis.");
+    resetResultBlock(resultBlocks.investigationSummary, "A summary of findings will appear here after analysis.");
+    resetResultBlock(resultBlocks.investigatorPriority, "Suggested priority level will appear here after analysis.");
+  }
+ 
+  /* ---- Loading state (reusable in Phase 4 when a real request is added) ---- */
+  function setLoadingState(isLoading) {
+    analyzeBtn.disabled = isLoading;
+    analyzeBtn.textContent = isLoading ? "Analyzing..." : "Analyze Transactions";
+ 
+    if (isLoading) {
+      resetResultBlock(resultBlocks.riskStatus, "Analysis in progress...");
+    }
+  }
