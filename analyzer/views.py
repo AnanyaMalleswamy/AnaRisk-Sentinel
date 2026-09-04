@@ -10,8 +10,24 @@ from django.views.decorators.http import require_POST
 
 @require_POST
 def analyze(request):
-    """Minimal pipeline-test endpoint. No analysis logic here."""
-    return JsonResponse({
+    """Temporary mock investigation response. No real analysis logic here."""
+    mock_response = {
         "status": "success",
-        "message": "Django backend connection successful",
-    })
+        "classification": "REVIEW_RECOMMENDED",
+        "message": "Mock investigation completed",
+        "findings": [
+            {
+                "rule": "UNUSUALLY_LARGE_TRANSACTION",
+                "severity": "HIGH",
+                "transaction_id": "T004",
+                "explanation": "Transaction amount is significantly above the customer's typical activity.",
+            },
+            {
+                "rule": "RAPID_SUCCESSION_TRANSFERS",
+                "severity": "MEDIUM",
+                "transaction_id": "T007",
+                "explanation": "Multiple transfers occurred within a short time window.",
+            },
+        ],
+    }
+    return JsonResponse(mock_response)

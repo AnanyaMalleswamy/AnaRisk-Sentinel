@@ -56,11 +56,26 @@ function resetAllResults() {
   }
 
   /* ---- Backend result rendering ---- */
-  function renderBackendResult(message) {
-    const text = resultBlocks.riskStatus.querySelector(".placeholder-text");
-    if (text) {
-      text.textContent = message;
+  /* ---- Backend result rendering ---- */
+  function renderBackendResult(data) {
+    resetResultBlock(resultBlocks.riskStatus, `${data.classification} — ${data.message}`);
+
+    if (Array.isArray(data.findings) && data.findings.length > 0) {
+      const indicatorsText = data.findings
+        .map((f) => `${f.rule} (${f.severity})`)
+        .join(", ");
+      resetResultBlock(resultBlocks.riskIndicators, indicatorsText);
+
+      const transactionsText = data.findings
+        .map((f) => `${f.transaction_id}: ${f.explanation}`)
+        .join(" | ");
+      resetResultBlock(resultBlocks.transactionsOfInterest, transactionsText);
+    } else {
+      resetResultBlock(resultBlocks.riskIndicators, "No risk indicators returned.");
+      resetResultBlock(resultBlocks.transactionsOfInterest, "No flagged transactions returned.");
     }
+
+    resetResultBlock(resultBlocks.investigationSummary, data.message);
   }
 
   function renderError(message) {
@@ -93,12 +108,13 @@ function resetAllResults() {
         }
         return response.json();
       })
-      .then((data) => {
+        .then((data) => {
         if (data.status !== "success" || !data.message) {
           throw new Error("Unexpected response from server.");
         }
-        renderBackendResult(data.message);
+        renderBackendResult(data);
       })
+
       .catch((error) => {
         renderError(error.message);
       })
