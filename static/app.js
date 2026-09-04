@@ -58,26 +58,25 @@ function resetAllResults() {
   /* ---- Backend result rendering ---- */
   /* ---- Backend result rendering ---- */
   function renderBackendResult(data) {
-    resetResultBlock(resultBlocks.riskStatus, `${data.classification} — ${data.message}`);
+    resetResultBlock(
+      resultBlocks.riskStatus,
+      `Parsed successfully — ${data.transaction_count} transaction(s) found.`
+    );
 
-    if (Array.isArray(data.findings) && data.findings.length > 0) {
-      const indicatorsText = data.findings
-        .map((f) => `${f.rule} (${f.severity})`)
-        .join(", ");
-      resetResultBlock(resultBlocks.riskIndicators, indicatorsText);
-
-      const transactionsText = data.findings
-        .map((f) => `${f.transaction_id}: ${f.explanation}`)
+    if (Array.isArray(data.preview) && data.preview.length > 0) {
+      const previewText = data.preview
+        .map((t) => `${t.transaction_id}: ${t.amount} (${t.channel})`)
         .join(" | ");
-      resetResultBlock(resultBlocks.transactionsOfInterest, transactionsText);
+      resetResultBlock(resultBlocks.transactionsOfInterest, previewText);
     } else {
-      resetResultBlock(resultBlocks.riskIndicators, "No risk indicators returned.");
-      resetResultBlock(resultBlocks.transactionsOfInterest, "No flagged transactions returned.");
+      resetResultBlock(resultBlocks.transactionsOfInterest, "No transactions to preview.");
     }
 
-    resetResultBlock(resultBlocks.investigationSummary, data.message);
+    resetResultBlock(resultBlocks.riskIndicators, "Risk calculation not implemented in this phase.");
+    resetResultBlock(resultBlocks.customerBaseline, "Baseline calculation not implemented in this phase.");
+    resetResultBlock(resultBlocks.investigationSummary, "CSV parsing verified. Investigation summary not implemented in this phase.");
   }
-
+  
   function renderError(message) {
     const text = resultBlocks.riskStatus.querySelector(".placeholder-text");
     if (text) {
