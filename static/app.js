@@ -80,8 +80,13 @@ function resetAllResults() {
     }
 
     setLoadingState(true);
-
-    fetch("/api/analyze/", { method: "POST" })
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch("/api/analyze/", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrfToken
+      }
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Server responded with status ${response.status}`);
