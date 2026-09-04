@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Transaction Risk Investigation Assistant</title>
+</head>
+<body>
+
+    <header id="app-header" class="app-header">
+        <h1>Banking Transaction Risk Investigation Assistant</h1>
+        <p class="app-description">
+            This tool reviews a customer's transaction history and identifies activity
+            that may warrant further investigation by a fraud analyst.
+        </p>
+    </header>
+<main id="app-main" class="app-main">
+
+        <section id="upload-section" class="upload-section" aria-labelledby="upload-heading">
+            <h2 id="upload-heading">Transaction Upload</h2>
+
+            <form id="upload-form" class="upload-form">
+                <div class="form-group">
+                    <label for="csv-file-input">Upload Transaction CSV</label>
+                    <input type="file" id="csv-file-input" name="csv-file" accept=".csv">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="analyze-btn" class="btn btn-primary">
+                        Analyze Transactions
+                    </button>
+                    <button type="button" id="load-sample-btn" class="btn btn-secondary">
+                        Load Sample Customer
+                    </button>
+                </div>
+            </form>
+        </section>
+        <section id="results-section" class="results-section" aria-labelledby="results-heading">
+            <h2 id="results-heading">Investigation Results</h2>
+
+            <div id="risk-status" class="result-block" data-role="risk-status">
+                <h3>Investigation Result / Risk Status</h3>
+                <p class="placeholder-text">Analysis has not been run yet.</p>
+            </div>
+
+            <div id="risk-indicators" class="result-block" data-role="risk-indicators">
+                <h3>Risk Indicators</h3>
+                <p class="placeholder-text">Risk indicators will appear here after analysis.</p>
+            </div>
+
+            <div id="transactions-of-interest" class="result-block" data-role="transactions-of-interest">
+                <h3>Transactions of Interest</h3>
+                <p class="placeholder-text">Flagged transactions will appear here after analysis.</p>
+            </div>
+
+            <div id="customer-baseline" class="result-block" data-role="customer-baseline">
+                <h3>Customer Baseline</h3>
+                <p class="placeholder-text">Baseline behavior summary will appear here after analysis.</p>
+            </div>
+
+            <div id="investigation-summary" class="result-block" data-role="investigation-summary">
+                <h3>Investigation Summary</h3>
+                <p class="placeholder-text">A summary of findings will appear here after analysis.</p>
+            </div>
+
+            <div id="investigator-priority" class="result-block" data-role="investigator-priority">
+                <h3>Investigator Priority</h3>
+                <p class="placeholder-text">Suggested priority level will appear here after analysis.</p>
+            </div>
+        </section>
+
+    </main>        
+ <footer id="app-footer" class="app-footer">
+        <p class="disclaimer">
+            This system identifies activity that may warrant review. It does not determine that fraud has occurred.
+        </p>
+    </footer>
+
+</body>
+</html>    
