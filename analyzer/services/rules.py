@@ -229,3 +229,35 @@ def detect_activity_burst(transactions, baseline):
             },
         })
     return signals
+
+#general function to actually generate signals and to classify overall based on the signals above
+def generate_signals(customer_id, transactions, baseline):
+    """Run all four detectors and return a traceability-checked signal list."""
+    valid_ids = {t["transaction_id"] for t in transactions}
+
+    signals = []
+    signals.extend(detect_unusually_large_transactions(transactions, baseline))
+    signals.extend(detect_new_payee_burst(transactions, baseline))
+    signals.extend(detect_behavioral_break(customer_id, transactions, baseline))
+    signals.extend(detect_activity_burst(transactions, baseline))
+
+    # Defensive traceability guarantee — every ID must trace to real input.
+    for signal in signals:
+        signal["transaction_ids"] = [tid for tid in signal["transaction_ids"] if tid in valid_ids]
+
+    return [s for s in signals if s["transaction_ids"]]
+
+
+def classify_overall(signals, baseline):
+    """Deterministic, conservative overall classification."""
+    if not signals:
+        return "NO_ATTENTION"
+
+    if baseline.get("history_strength") == "sparse":
+        return "REVIEW_LIMITED_EVIDENCE"
+
+    severities = [s["severity"] for s in signals]
+    if len(signals) >= 2 or "high" in severities:
+        return "REVIEW_RECOMMENDED"
+
+    return "REVIEW_LIMITED_EVIDENCE"
