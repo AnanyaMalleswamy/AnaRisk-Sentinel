@@ -115,3 +115,68 @@ def detect_new_payee_burst(transactions, baseline):
             },
         })
     return signals
+
+#Signal 3:
+def detect_behavioral_break(customer_id, transactions, baseline):
+    signals = []
+    history_end = baseline.get("history_end")
+    if not history_end or baseline.get("transaction_count", 0) < 2:
+        return signals
+
+    history_end_date = _parse_date(history_end)
+    window_start = history_end_date - timedelta(days=BEHAVIORAL_BREAK_WINDOW_DAYS)
+
+    recent_txns = [t for t in transactions if _parse_date(t["date"]) > window_start]
+    established_txns = [t for t in transactions if _parse_date(t["date"]) <= window_start]
+
+    if not recent_txns or not established_txns:
+        return signals  # nothing established to compare against, or nothing recent to evaluate
+
+    established = build_baseline_for_customer(customer_id, established_txns)
+    recent = build_baseline_for_customer(customer_id, recent_txns)
+
+    dimensions_flagged = []
+
+    est_typical_upper = established["amount_profile"]["typical_upper"]
+    recent_median = recent["amount_profile"]["median"]
+    if est_typical_upper and recent_median and recent_median > est_typical_upper * BEHAVIORAL_BREAK_AMOUNT_MULTIPLIER:
+        dimensions_flagged.append(f"amount (recent median {recent_median} vs established typical upper {est_typical_upper})")
+
+    est_dominant = established["channel_profile"]["dominant_channel"]
+    est_dominant_share = established["channel_profile"]["proportions"].get(est_dominant, 0) if est_dominant else 0
+    recent_dominant = recent["channel_profile"]["dominant_channel"]
+    if est_dominant and recent_dominant and recent_dominant != est_dominant and est_dominant_share >= BEHAVIORAL_BREAK_CHANNEL_CONCENTRATION:
+        dimensions_flagged.append(f"channel (established dominant '{est_dominant}' at {round(est_dominant_share*100)}%, recent dominant '{recent_dominant}')")
+
+    established_payee_names = set(established["payee_profile"]["payees"].keys())
+    unfamiliar_recent = [t for t in recent_txns if t["payee"] not in established_payee_names]
+    unfamiliar_ratio = len(unfamiliar_recent) / len(recent_txns)
+    if unfamiliar_ratio >= BEHAVIORAL_BREAK_PAYEE_UNFAMILIAR_RATIO:
+        dimensions_flagged.append(f"payee ({round(unfamiliar_ratio*100)}% of recent transactions involve unfamiliar payees)")
+
+    est_rate_per_week = established["frequency_profile"].get("transactions_per_week")
+    if est_rate_per_week:
+        recent_days = max((history_end_date - window_start).days, 1)
+        recent_rate_per_week = (len(recent_txns) / recent_days) * 7
+        if recent_rate_per_week > est_rate_per_week * BEHAVIORAL_BREAK_FREQUENCY_MULTIPLIER:
+            dimensions_flagged.append(f"frequency (recent ~{round(recent_rate_per_week,1)}/week vs established ~{round(est_rate_per_week,1)}/week)")
+
+    if len(dimensions_flagged) < BEHAVIORAL_BREAK_MIN_DIMENSIONS:
+        return signals  # normal variation, not a meaningful regime change
+
+    severity = "high" if len(dimensions_flagged) >= 3 else "medium"
+
+    signals.append({
+        "signal_type": "BEHAVIORAL_BREAK",
+        "transaction_ids": [t["transaction_id"] for t in recent_txns],
+        "severity": severity,
+        "reason": (
+            f"Recent activity (last {BEHAVIORAL_BREAK_WINDOW_DAYS} days) differs from established "
+            f"behavior across {len(dimensions_flagged)} dimension(s): " + "; ".join(dimensions_flagged)
+        ),
+        "evidence": {
+            "window_days": BEHAVIORAL_BREAK_WINDOW_DAYS,
+            "dimensions_flagged": dimensions_flagged,
+        },
+    })
+    return signals
