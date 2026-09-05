@@ -208,3 +208,55 @@ def generate_pdf(report_data):
 
     story.append(header_table)
     story.append(Spacer(1, 10))
+
+
+    story.append(
+        Paragraph(
+            "BANKING TRANSACTION<br/>INVESTIGATION REPORT",
+            title_style,
+        )
+    )
+
+    story.append(
+        Paragraph(
+            "Transaction Risk Investigation Assistant · Track PS06",
+            subtitle_style,
+        )
+    )
+
+    # Header information
+    priority = narrative.get(
+        "investigator_priority",
+        "NO_ATTENTION" if classification == "NO_ATTENTION" else "REVIEW",
+    )
+
+    header_data = [
+        [
+            Paragraph("<b>CUSTOMER</b><br/>" + str(customer_id), body_style),
+            Paragraph("<b>ASSESSMENT</b><br/>" + str(classification), body_style),
+            Paragraph("<b>PRIORITY</b><br/>" + str(priority), priority_style),
+        ]
+    ]
+
+    header_table = Table(
+        header_data,
+        colWidths=[55 * mm, 65 * mm, 45 * mm],
+    )
+
+    header_table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F3F5F8")),
+                ("BOX", (0, 0), (-1, -1), 0.7, colors.HexColor("#D9DEE7")),
+                ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#D9DEE7")),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 10),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+                ("TOPPADDING", (0, 0), (-1, -1), 9),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 9),
+            ]
+        )
+    )
+
+    story.append(header_table)
+    story.append(Spacer(1, 10))
