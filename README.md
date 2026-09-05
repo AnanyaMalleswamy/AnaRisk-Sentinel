@@ -46,8 +46,7 @@ transaction the narrative cites comes from the evidence payload handed to it.
 
 The current rule set does not include an "odd-hours activity" check. The transaction schema
 used here carries a date but not a time, so time-of-day risk can't be evaluated from this data
-model yet — flagged here rather than silently omitted. [Update this once you've decided
-whether to add a `time` column + rule before submitting, or keep this as a stated scope call.]
+model yet — flagged here rather than silently omitted. 
 
 ### Tech stack
 
