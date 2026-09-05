@@ -4,6 +4,8 @@ import re
 
 from google import genai
 from google.genai import types
+from dotenv import load_dotenv
+load_dotenv()
 
 GEMINI_MODEL = "gemini-2.5-flash"  # cheap/fast model choice for quota reasons
 
