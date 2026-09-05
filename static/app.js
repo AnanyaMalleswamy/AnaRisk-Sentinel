@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const analyzeBtn = document.getElementById("analyze-btn");
   const loadSampleBtn = document.getElementById("load-sample-btn");
   const uploadForm = document.getElementById("upload-form");
+  const generateReportBtn = document.getElementById("generate-report-btn");
 
   const resultBlocks = {
     riskStatus: document.getElementById("risk-status"),

@@ -18,9 +18,11 @@ from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render
 from analyzer.views import analyze, index
+from analyzer.views import analyze, generate_report, index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", lambda request: render(request, "index.html")),
-    path("api/analyze/", analyze, name="analyze")
+    path("api/analyze/", analyze, name="analyze"),
+    path("api/generate-report/", generate_report, name="generate_report")
 ]
