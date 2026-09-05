@@ -271,9 +271,75 @@ function renderNarrative(narrative) {
   });
 
    generatePdfBtn.addEventListener("click", () => {
-    console.log("Generating PDF report...");
-    window.location.href = "/api/generate-pdf/";
-    });
+    if (dataSource !== "file" || !fileInput.files[0]) {
+        setFileStatus(
+            "Please select a CSV file before downloading the PDF report."
+        );
+        return;
+    }
+
+    const csrfTokenElement = document.querySelector(
+        "[name=csrfmiddlewaretoken]"
+    );
+
+    if (!csrfTokenElement) {
+        resetResultBlock(
+            resultBlocks.investigationSummary,
+            "PDF unavailable: CSRF token not found."
+        );
+        return;
+    }
+
+    const csrfToken = csrfTokenElement.value;
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    generatePdfBtn.disabled = true;
+    generatePdfBtn.textContent = "Preparing PDF...";
+
+    fetch("/api/generate-pdf/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+        },
+        body: formData,
+    })
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((data) => {
+                    throw new Error(
+                        data.message || "Unable to generate PDF."
+                    );
+                });
+            }
+
+            return response.blob();
+        })
+        .then((blob) => {
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "investigation_report.pdf";
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+            resetResultBlock(
+                resultBlocks.investigationSummary,
+                `PDF unavailable: ${error.message}`
+            );
+        })
+        .finally(() => {
+            generatePdfBtn.disabled = false;
+            generatePdfBtn.textContent = "Download PDF Report";
+        });
+});
 
   // ---- File selected ----
   fileInput.addEventListener("change", () => {
