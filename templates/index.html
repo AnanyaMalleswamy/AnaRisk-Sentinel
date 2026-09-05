@@ -2,88 +2,227 @@
 <html lang="en">
 <head>
     {% load static %}
-    <script src="{% static 'app.js' %}" defer></script>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banking Transaction Risk Investigation Assistant</title>
+    <title>AnaRisk Sentinel | Banking Risk Investigation Assistant</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="{% static 'app.js' %}" defer></script>
 </head>
 <body>
     {% csrf_token %}
+
     <header id="app-header" class="app-header">
-        <h1>Banking Transaction Risk Investigation Assistant</h1>
-        <p class="app-description">
-            This tool reviews a customer's transaction history and identifies activity
-            that may warrant further investigation by a fraud analyst.
-        </p>
+        <div class="header-content">
+            <h1 class="glow-title">AnaRisk <span class="title-highlight">Sentinel</span></h1>
+            <p class="app-description">
+                AI-Powered Fraud Intelligence & Transaction Behavior Investigation Platform
+            </p>
+        </div>
     </header>
-<main id="app-main" class="app-main">
 
-        <section id="upload-section" class="upload-section" aria-labelledby="upload-heading">
-            <h2 id="upload-heading">Transaction Upload</h2>
+    <main id="app-main" class="app-main">
+        <div class="dashboard-grid">
 
-            <form id="upload-form" class="upload-form">
-                <div class="form-group">
-                    <label for="csv-file-input">Upload Transaction CSV</label>
-                    <input type="file" id="csv-file-input" name="csv-file" accept=".csv">
-                </div>
+            <!-- LEFT COLUMN: Inputs, AI Output & Deep Dive Analysis -->
+            <div class="left-column">
 
-                <div class="form-actions">
-                    <button type="submit" id="analyze-btn" class="btn btn-primary">
-                        Analyze Transactions
+                <section id="upload-section" class="card upload-section">
+                    <h2 class="section-title">Transaction Ingestion & Actions</h2>
+
+                    <form id="upload-form" class="upload-form">
+                        <div class="form-group custom-file-wrapper">
+                            <label for="csv-file-input" class="file-label">
+                                <span class="file-text">Choose CSV Transaction File</span>
+                            </label>
+                            <input type="file" id="csv-file-input" name="csv-file" accept=".csv">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="analyze-btn" class="glow-btn btn-primary">
+                                Run Baseline Analysis
+                            </button>
+                            <button type="button" id="generate-report-btn" class="glow-btn btn-ai">
+                                Generate AI Narrative Analysis
+                            </button>
+                            <button type="button" id="generate-pdf-btn" class="glow-btn btn-pdf">
+                                Download PDF Report
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <section id="ai-output-section" class="card ai-output-card">
+                    <div class="card-header-bar">
+                        <h2 class="section-title glow-subtitle">AI Executive Investigation Report</h2>
+                        <span class="ai-status-tag">Gemini Intelligence Engine</span>
+                    </div>
+                    <div id="investigation-summary" class="ai-narrative-box result-block" data-role="investigation-summary">
+                        <p class="placeholder-text">Click "Generate AI Narrative Analysis" to generate the investigation summary and recommendations.</p>
+                    </div>
+                </section>
+
+                <section class="accordion-section">
+                    <button type="button" class="accordion-toggle" id="toggle-baseline-btn">
+                        <span>Click here to view Rule Engine & Baseline Analysis</span>
+                        <span class="accordion-arrow">&#9660;</span>
                     </button>
-                    <button type="button" id="load-sample-btn" class="btn btn-secondary">
-                        Load Sample Customer
-                    </button>
-                    <button type="button" id="generate-report-btn" class="btn btn-secondary">
-                    Generate Investigation Report
-                    </button>
-                    <button type="button" id="generate-pdf-btn" class="btn btn-secondary">
-                    Download PDF Report
-                    </button>
-                </div>
-            </form>
-        </section>
-        <section id="results-section" class="results-section" aria-labelledby="results-heading">
-            <h2 id="results-heading">Investigation Results</h2>
 
-            <div id="risk-status" class="result-block" data-role="risk-status">
-                <h3>Investigation Result / Risk Status</h3>
-                <p class="placeholder-text">Analysis has not been run yet.</p>
+                    <div class="accordion-content hidden" id="baseline-details-panel">
+                        <div class="results-grid-inner">
+                            <div id="risk-status" class="result-block card-tile" data-role="risk-status">
+                                <h3>Risk Status & Verdict</h3>
+                                <p class="placeholder-text">Analysis has not been run yet.</p>
+                            </div>
+
+                            <div id="risk-indicators" class="result-block card-tile" data-role="risk-indicators">
+                                <h3>Risk Indicators Triggered</h3>
+                                <p class="placeholder-text">Risk indicators will appear here after analysis.</p>
+                            </div>
+
+                            <div id="transactions-of-interest" class="result-block card-tile" data-role="transactions-of-interest">
+                                <h3>Transactions of Interest</h3>
+                                <p class="placeholder-text">Flagged transactions will appear here after analysis.</p>
+                            </div>
+
+                            <div id="customer-baseline" class="result-block card-tile" data-role="customer-baseline">
+                                <h3>Customer Baseline Profile</h3>
+                                <p class="placeholder-text">Baseline behavior summary will appear here after analysis.</p>
+                            </div>
+
+                            <div id="investigator-priority" class="result-block card-tile" data-role="investigator-priority">
+                                <h3>Investigator Priority & Threads</h3>
+                                <p class="placeholder-text">Suggested priority level will appear here after analysis.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
             </div>
 
-            <div id="risk-indicators" class="result-block" data-role="risk-indicators">
-                <h3>Risk Indicators</h3>
-                <p class="placeholder-text">Risk indicators will appear here after analysis.</p>
-            </div>
+            <!-- RIGHT COLUMN: Dashboard Widgets / CSS Risk Bar Section, Notes & Recent Cases -->
+            <div class="right-column">
 
-            <div id="transactions-of-interest" class="result-block" data-role="transactions-of-interest">
-                <h3>Transactions of Interest</h3>
-                <p class="placeholder-text">Flagged transactions will appear here after analysis.</p>
-            </div>
+                <section id="temp-dashboard" class="card widget-grid-card">
+                    <h2 class="section-title">Sentinel System Monitor</h2>
+                    <div class="widget-grid">
+                        <div class="bank-widget">
+                            <span class="widget-title">CSV Parsing</span>
+                            <span class="widget-value">ACTIVE</span>
+                        </div>
+                        <div class="bank-widget">
+                            <span class="widget-title">Baseline Per Consumer</span>
+                            <span class="widget-value">ACTIVE</span>
+                        </div>
+                        <div class="bank-widget">
+                            <span class="widget-title">Strict Rules</span>
+                            <span class="widget-value">ENFORCED</span>
+                        </div>
+                        <div class="bank-widget">
+                            <span class="widget-title">Evidence Thread</span>
+                            <span class="widget-value">READY</span>
+                        </div>
+                        <div class="bank-widget">
+                            <span class="widget-title">Downloadable PDF</span>
+                            <span class="widget-value">AVAILABLE</span>
+                        </div>
+                        <div class="bank-widget">
+                            <span class="widget-title">AI Assessment</span>
+                            <span class="widget-value">ACTIVE</span>
+                        </div>
+                    </div>
+                </section>
 
-            <div id="customer-baseline" class="result-block" data-role="customer-baseline">
-                <h3>Customer Baseline</h3>
-                <p class="placeholder-text">Baseline behavior summary will appear here after analysis.</p>
-            </div>
+                <!-- PURE CSS RISK VECTOR DISTRIBUTION BARS -->
+                <section id="risk-vector-section" class="card risk-vector-card">
+                    <div class="card-header-bar">
+                        <h2 class="section-title">Data Cleaning & LLM Efficiency Pipeline</h2>
+                        <span class="ai-status-tag">Behavior Anomalies</span>
+                    </div>
+                    <div class="css-chart-container">
+                        <div class="bar-group">
+                            <div class="bar-info">
+                                <span class="bar-label">Data Cleaning & Sanitization</span>
+                                <span class="bar-value" id="val-deviation">95%</span>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-critical" id="bar-deviation" style="width: 95%;"></div>
+                            </div>
+                        </div>
 
-            <div id="investigation-summary" class="result-block" data-role="investigation-summary">
-                <h3>Investigation Summary</h3>
-                <p class="placeholder-text">A summary of findings will appear here after analysis.</p>
-            </div>
+                        <div class="bar-group">
+                            <div class="bar-info">
+                                <span class="bar-label">Retrieval Precision & Context Match</span>
+                                <span class="bar-value" id="val-velocity">94%</span>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-warning" id="bar-velocity" style="width: 94%;"></div>
+                            </div>
+                        </div>
 
-            <div id="investigator-priority" class="result-block" data-role="investigator-priority">
-                <h3>Investigator Priority</h3>
-                <p class="placeholder-text">Suggested priority level will appear here after analysis.</p>
-            </div>
-        </section>
+                        <div class="bar-group">
+                            <div class="bar-info">
+                                <span class="bar-label">Risk Metric</span>
+                                <span class="bar-value" id="val-geo">0%</span>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-info" id="bar-geo" style="width: 0%;"></div>
+                            </div>
+                        </div>
 
-    </main>        
- <footer id="app-footer" class="app-footer">
+                        <div class="bar-group">
+                            <div class="bar-info">
+                                <span class="bar-label">Low-Parameter Model Efficiency</span>
+                                <span class="bar-value" id="val-structuring">90%</span>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-safe" id="bar-structuring" style="width: 90%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card notes-card">
+                    <div class="card-header-bar">
+                        <h2 class="section-title">Investigator Notes</h2>
+                        <button type="button" id="contact-customer-btn" class="glow-btn btn-contact">
+                            Customer Info
+                        </button>
+                    </div>
+                    <textarea id="investigator-notes" class="notes-input" placeholder="Type case observation notes, interview logs, or manual override reasons here..."></textarea>
+                </section>
+
+                <section class="card reports-list-card">
+                    <h2 class="section-title">Audited Session Log</h2>
+                    <div class="reports-list" id="audited-reports-queue">
+                        <p class="placeholder-text">No active audits completed in this session.</p>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <div id="contact-drawer" class="contact-drawer hidden">
+        <div class="drawer-content card">
+            <button id="close-drawer-btn" class="close-btn">&times;</button>
+            <h3 class="glow-subtitle">Customer Contact Details</h3>
+            <p class="drawer-notice">Fraud Verification Dispatch Protocol</p>
+            <div class="contact-details" id="contact-details-content">
+                <p class="placeholder-text">Upload and analyze transaction data to view customer contact information.</p>
+            </div>
+            <button type="button" class="glow-btn btn-primary" onclick="alert('Verification dispatch initiated.')">
+                Initiate Verification Call
+            </button>
+        </div>
+    </div>
+
+    <footer id="app-footer" class="app-footer">
         <p class="disclaimer">
             This system identifies activity that may warrant review. It does not determine that fraud has occurred.
         </p>
     </footer>
-
 </body>
-</html>    
+</html>
