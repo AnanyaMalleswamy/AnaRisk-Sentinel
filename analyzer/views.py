@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.tasks import signals
+import json
 from analyzer.services import baseline
 from analyzer.services.parser import CSVValidationError, parse_transactions_csv
 from analyzer.services.baseline import build_baseline_for_customer
@@ -12,7 +13,7 @@ from analyzer.services.gemini import (
     build_evidence_payload,
     generate_investigation_narrative,
 )
-from django.http import FileResponse
+from django.http import FileResponse, request
 from .services.pdf_report import generate_pdf
 # Create your views here.
 def index(request):
@@ -104,22 +105,55 @@ def generate_report(request):
 def generate_pdf_report(request):
     """Generate a PDF from deterministic analysis data and optional AI narrative."""
 
+    # ---------------------------------------------------------
+    # Optional existing AI narrative
+    # ---------------------------------------------------------
+    narrative = {}
+
+    narrative_raw = request.POST.get("narrative", "").strip()
+
+    if narrative_raw:
+        try:
+            parsed_narrative = json.loads(narrative_raw)
+
+            if isinstance(parsed_narrative, dict):
+                narrative = parsed_narrative
+
+        except json.JSONDecodeError:
+            narrative = {}
+
+    # ---------------------------------------------------------
+    # Uploaded CSV
+    # ---------------------------------------------------------
     uploaded_file = request.FILES.get("file")
 
     if not uploaded_file:
         return JsonResponse(
-            {"status": "error", "message": "No file was uploaded."},
+            {
+                "status": "error",
+                "message": "No file was uploaded.",
+            },
             status=400,
         )
 
+    # ---------------------------------------------------------
+    # Parse CSV
+    # ---------------------------------------------------------
     try:
         transactions = parse_transactions_csv(uploaded_file)
+
     except CSVValidationError as exc:
         return JsonResponse(
-            {"status": "error", "message": str(exc)},
+            {
+                "status": "error",
+                "message": str(exc),
+            },
             status=400,
         )
 
+    # ---------------------------------------------------------
+    # Deterministic analysis
+    # ---------------------------------------------------------
     customer_id = transactions[0]["customer_id"]
 
     baseline = build_baseline_for_customer(
@@ -145,6 +179,9 @@ def generate_pdf_report(request):
         baseline,
     )
 
+    # ---------------------------------------------------------
+    # Build PDF data
+    # ---------------------------------------------------------
     report_data = {
         "customer_id": customer_id,
         "classification": classification,
@@ -152,9 +189,12 @@ def generate_pdf_report(request):
         "signals": signals,
         "threads": threads,
         "transactions": transactions,
-        "narrative": None,
+        "narrative": narrative,
     }
 
+    # ---------------------------------------------------------
+    # Generate PDF
+    # ---------------------------------------------------------
     pdf_buffer = generate_pdf(report_data)
 
     return FileResponse(

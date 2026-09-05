@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const uploadForm = document.getElementById("upload-form");
   const generateReportBtn = document.getElementById("generate-report-btn");
   const generatePdfBtn = document.getElementById("generate-pdf-btn");
+  let latestNarrative =null;
 
   const resultBlocks = {
     riskStatus: document.getElementById("risk-status"),
@@ -148,6 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 
 function renderNarrative(narrative) {
+    latestNarrative = narrative; // Store the latest narrative for potential future use
     const lines = [
       `Assessment: ${narrative.assessment}`,
       `Key findings: ${narrative.key_findings.join(" | ")}`,
@@ -294,6 +296,12 @@ function renderNarrative(narrative) {
 
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
+    if (latestNarrative) {
+    formData.append(
+        "narrative",
+        JSON.stringify(latestNarrative)
+    );
+}
 
     generatePdfBtn.disabled = true;
     generatePdfBtn.textContent = "Preparing PDF...";
