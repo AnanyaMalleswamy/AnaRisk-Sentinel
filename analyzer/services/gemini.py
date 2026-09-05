@@ -23,3 +23,19 @@ class GeminiRequestError(Exception):
 
 class GeminiResponseError(Exception):
     """Raised when Gemini's response is missing, malformed, or fails validation."""
+
+
+#system prompt comes here
+
+
+RESPONSE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "assessment": {"type": "string"},
+        "key_findings": {"type": "array", "items": {"type": "string"}},
+        "behavioral_change": {"type": "string"},
+        "investigator_priority": {"type": "string"},
+        "recommended_review": {"type": "array", "items": {"type": "string"}},
+    },
+    "required": ["assessment", "key_findings", "behavioral_change", "investigator_priority", "recommended_review"],
+}
