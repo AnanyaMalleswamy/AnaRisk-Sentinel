@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (dataSource !== "file" || !fileInput.files[0]) {
       setFileStatus("Please select a CSV file before analyzing.");
       return;
-    }
+    }  
 
     const csrfTokenElement = document.querySelector(
       "[name=csrfmiddlewaretoken]"
@@ -218,6 +218,36 @@ document.addEventListener("DOMContentLoaded", () => {
       .finally(() => {
         setLoadingState(false);
       });
+
+/* ---- Event: Generate Investigation Report (separate, explicit Gemini call) ---- */
+    generateReportBtn.addEventListener("click", () => {
+    if (dataSource !== "file" || !fileInput.files[0]) {
+      setFileStatus("Please select a CSV file (not the sample) before generating an AI report.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    generateReportBtn.disabled = true;
+    generateReportBtn.textContent = "Generating report...";
+
+    fetch("/api/generate-report/", { method: "POST", body: formData })
+      .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok || data.status !== "success") {
+          throw new Error(data.message || "Unable to generate report.");
+        }
+        renderNarrative(data.narrative);
+      })
+      .catch((error) => {
+        resetResultBlock(resultBlocks.investigationSummary, `AI report unavailable: ${error.message}`);
+      })
+      .finally(() => {
+        generateReportBtn.disabled = false;
+        generateReportBtn.textContent = "Generate Investigation Report";
+      });
+    });  
   });
 
   // ---- File selected ----
