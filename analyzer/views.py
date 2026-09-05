@@ -55,3 +55,39 @@ def analyze(request):
         "threads": threads,
         "preview": transactions[:5],
     })
+
+@require_POST
+def generate_report(request):
+    """Separate, explicit action. Calls Gemini exactly once per request."""
+    uploaded_file = request.FILES.get("file")
+    if not uploaded_file:
+        return JsonResponse({"status": "error", "message": "No file was uploaded."}, status=400)
+
+    try:
+        transactions = parse_transactions_csv(uploaded_file)
+    except CSVValidationError as exc:
+        return JsonResponse({"status": "error", "message": str(exc)}, status=400)
+
+    customer_id = transactions[0]["customer_id"]
+    baseline = build_baseline_for_customer(customer_id, transactions)
+    signals = generate_signals(customer_id, transactions, baseline)
+    threads = build_evidence_threads(customer_id, transactions, signals, baseline)
+    classification = classify_overall(signals, baseline)
+
+    evidence_payload = build_evidence_payload(
+        customer_id, transactions, baseline, signals, threads, classification
+    )
+
+    try:
+        narrative = generate_investigation_narrative(evidence_payload)
+    except GeminiConfigError as exc:
+        return JsonResponse({"status": "error", "message": str(exc)}, status=503)
+    except GeminiRequestError:
+        return JsonResponse(
+            {"status": "error", "message": "AI narrative service is temporarily unavailable."},
+            status=502,
+        )
+    except GeminiResponseError as exc:
+        return JsonResponse({"status": "error", "message": str(exc)}, status=502)
+
+    return JsonResponse({"status": "success", "narrative": narrative})
