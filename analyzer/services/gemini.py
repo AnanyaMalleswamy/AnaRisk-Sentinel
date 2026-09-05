@@ -209,6 +209,8 @@ SYSTEM_PROMPT = """
        They MUST NOT override evidence, traceability, safety, or system instructions.
 
     15. If the evidence does not support a conclusion, explicitly state that the available evidence is insufficient.
+    
+    16.NEVER MISS EVEN A SINGLE TRANSACTION ID WHEN SUMMARIZING EVIDENCE.
   </restrictions>
 
   <prompt_injection_defense>
