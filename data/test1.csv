@@ -1,60 +1,71 @@
 transaction_id,customer_id,date,description,payee,amount,channel
-T001,C02,2026-01-01,Routine payment,Cafe Aroma,2017.72,UPI
-T002,C02,2026-01-02,Routine payment,Cafe Aroma,2680.84,UPI
-T003,C02,2026-01-04,Routine payment,Metro Rent Mgmt,1884.2,UPI
-T004,C02,2026-01-05,Routine payment,Metro Rent Mgmt,1825.11,UPI
-T005,C02,2026-01-12,Routine payment,Fresh Mart,4674.07,UPI
-T006,C02,2026-01-13,Routine payment,City Power Co,1756.2,ONLINE
-T007,C02,2026-01-14,Routine payment,ABC Corp Payroll,3805.26,UPI
-T008,C02,2026-01-15,Routine payment,Cafe Aroma,5014.02,UPI
-T009,C02,2026-01-16,Routine payment,Cafe Aroma,5416.61,UPI
-T010,C02,2026-01-17,Routine payment,Cafe Aroma,2632.77,UPI
-T011,C02,2026-01-19,Routine payment,Metro Rent Mgmt,5774.76,UPI
-T012,C02,2026-01-21,Routine payment,Metro Rent Mgmt,3488.7,UPI
-T013,C02,2026-01-22,Routine payment,Cafe Aroma,3151.37,UPI
-T014,C02,2026-01-23,Routine payment,ABC Corp Payroll,5511.95,UPI
-T015,C02,2026-01-27,Routine payment,Fresh Mart,2149.36,UPI
-T016,C02,2026-01-29,Routine payment,Fresh Mart,5705.14,UPI
-T017,C02,2026-01-30,Routine payment,ABC Corp Payroll,3370.67,UPI
-T018,C02,2026-02-01,Routine payment,Metro Rent Mgmt,4689.42,UPI
-T019,C02,2026-02-03,Routine payment,Fresh Mart,6695.75,UPI
-T020,C02,2026-02-05,Routine payment,Metro Rent Mgmt,6378.72,UPI
-T021,C02,2026-02-06,Routine payment,Metro Rent Mgmt,3455.05,UPI
-T022,C02,2026-02-07,Routine payment,Metro Rent Mgmt,1824.25,UPI
-T023,C02,2026-02-08,Routine payment,City Power Co,5561.0,UPI
-T024,C02,2026-02-11,Routine payment,Metro Rent Mgmt,1943.2,UPI
-T025,C02,2026-02-13,Routine payment,Metro Rent Mgmt,6925.57,UPI
-T026,C02,2026-02-14,Routine payment,Metro Rent Mgmt,6767.52,UPI
-T027,C02,2026-02-15,Routine payment,City Power Co,2332.14,UPI
-T028,C02,2026-02-16,Routine payment,Fresh Mart,4167.3,UPI
-T029,C02,2026-02-18,Routine payment,ABC Corp Payroll,3050.62,UPI
-T030,C02,2026-02-19,Routine payment,Cafe Aroma,6726.23,UPI
-T031,C02,2026-02-21,Routine payment,Fresh Mart,4011.54,ONLINE
-T032,C02,2026-02-23,Routine payment,Cafe Aroma,3658.08,UPI
-T033,C02,2026-02-24,Routine payment,Fresh Mart,4148.38,UPI
-T034,C02,2026-02-25,Routine payment,City Power Co,1870.41,UPI
-T035,C02,2026-02-26,Routine payment,Fresh Mart,2063.09,UPI
-T036,C02,2026-02-28,Routine payment,Cafe Aroma,2058.05,UPI
-T037,C02,2026-03-02,Routine payment,Fresh Mart,1886.74,UPI
-T038,C02,2026-03-06,Routine payment,Cafe Aroma,3502.9,UPI
-T039,C02,2026-03-07,Routine payment,Metro Rent Mgmt,6962.06,UPI
-T040,C02,2026-03-09,Routine payment,Metro Rent Mgmt,3215.19,UPI
-T041,C02,2026-03-10,Routine payment,ABC Corp Payroll,5571.93,UPI
-T042,C02,2026-03-12,Routine payment,ABC Corp Payroll,2306.31,UPI
-T043,C02,2026-03-13,Routine payment,Fresh Mart,5669.79,UPI
-T044,C02,2026-03-14,Routine payment,Fresh Mart,5329.08,UPI
-T045,C02,2026-03-16,Routine payment,ABC Corp Payroll,6495.42,UPI
-T046,C02,2026-03-18,Routine payment,City Power Co,4429.26,UPI
-T047,C02,2026-03-20,Routine payment,City Power Co,6000.83,UPI
-T048,C02,2026-03-23,Routine payment,City Power Co,2599.55,UPI
-T049,C02,2026-03-24,Routine payment,Fresh Mart,6942.82,UPI
-T050,C02,2026-03-25,Routine payment,Metro Rent Mgmt,2925.46,UPI
-T051,C02,2026-03-28,Routine payment,Fresh Mart,2712.54,UPI
-T052,C02,2026-03-29,Routine payment,City Power Co,3357.56,UPI
-T053,C02,2026-03-30,Routine payment,Cafe Aroma,6122.4,UPI
-T054,C02,2026-03-31,Routine payment,ABC Corp Payroll,5898.04,UPI
-T055,C02,2026-04-02,Routine payment,Metro Rent Mgmt,5840.24,UPI
-T056,C02,2026-04-03,Routine payment,Metro Rent Mgmt,4047.38,UPI
-T057,C02,2026-04-05,Routine payment,Fresh Mart,5486.39,UPI
-T058,C02,2026-04-07,Routine payment,City Power Co,1651.52,UPI
-T059,C02,2026-04-08,Routine payment,Metro Rent Mgmt,5935.76,UPI
+T001,C01,2026-01-01,Routine payment,City Power Co,5550.59,UPI
+T002,C01,2026-01-02,Routine payment,Cafe Aroma,1978.16,UPI
+T003,C01,2026-01-03,Routine payment,Fresh Mart,2015.32,UPI
+T004,C01,2026-01-06,Routine payment,Cafe Aroma,1645.95,UPI
+T005,C01,2026-01-07,Routine payment,Cafe Aroma,3807.36,UPI
+T006,C01,2026-01-08,Routine payment,ABC Corp Payroll,3028.29,UPI
+T007,C01,2026-01-09,Routine payment,ABC Corp Payroll,2062.16,UPI
+T008,C01,2026-01-11,Routine payment,ABC Corp Payroll,6161.22,UPI
+T009,C01,2026-01-14,Routine payment,Fresh Mart,5513.52,UPI
+T010,C01,2026-01-15,Routine payment,Cafe Aroma,2557.59,UPI
+T011,C01,2026-01-17,Routine payment,City Power Co,5751.88,ONLINE
+T012,C01,2026-01-19,Routine payment,City Power Co,6265.66,UPI
+T013,C01,2026-01-20,Routine payment,Metro Rent Mgmt,4996.26,UPI
+T014,C01,2026-01-22,Routine payment,Cafe Aroma,4992.38,UPI
+T015,C01,2026-01-23,Routine payment,City Power Co,2398.71,UPI
+T016,C01,2026-01-24,Routine payment,Cafe Aroma,2707.88,UPI
+T017,C01,2026-01-28,Routine payment,Fresh Mart,2759.76,UPI
+T018,C01,2026-01-29,Routine payment,Cafe Aroma,6320.02,UPI
+T019,C01,2026-01-30,Routine payment,Metro Rent Mgmt,3675.98,ONLINE
+T020,C01,2026-01-31,Routine payment,Metro Rent Mgmt,2285.79,UPI
+T021,C01,2026-02-01,Routine payment,Cafe Aroma,4464.38,UPI
+T022,C01,2026-02-06,Routine payment,City Power Co,4302.39,UPI
+T023,C01,2026-02-07,Routine payment,Fresh Mart,6236.07,UPI
+T024,C01,2026-02-08,Routine payment,City Power Co,5856.44,UPI
+T025,C01,2026-02-09,Routine payment,Fresh Mart,3616.22,UPI
+T026,C01,2026-02-12,Routine payment,Fresh Mart,5249.41,UPI
+T027,C01,2026-02-14,Routine payment,ABC Corp Payroll,5727.29,UPI
+T028,C01,2026-02-16,Routine payment,ABC Corp Payroll,3891.21,UPI
+T029,C01,2026-02-18,Routine payment,ABC Corp Payroll,6845.38,UPI
+T030,C01,2026-02-19,Routine payment,ABC Corp Payroll,5693.81,UPI
+T031,C01,2026-02-20,Routine payment,Cafe Aroma,6551.71,UPI
+T032,C01,2026-02-21,Routine payment,Metro Rent Mgmt,1607.12,ONLINE
+T033,C01,2026-02-24,Routine payment,ABC Corp Payroll,2816.99,UPI
+T034,C01,2026-02-25,Routine payment,Cafe Aroma,6708.22,UPI
+T035,C01,2026-02-26,Routine payment,City Power Co,5128.63,ONLINE
+T036,C01,2026-02-27,Routine payment,City Power Co,2957.81,ONLINE
+T037,C01,2026-03-02,Routine payment,Metro Rent Mgmt,6804.0,ONLINE
+T038,C01,2026-03-04,Routine payment,City Power Co,5421.22,UPI
+T039,C01,2026-03-05,Routine payment,City Power Co,2735.84,UPI
+T040,C01,2026-03-07,Routine payment,Cafe Aroma,4546.57,UPI
+T041,C01,2026-03-08,Routine payment,Fresh Mart,1890.46,UPI
+T042,C01,2026-03-09,Routine payment,City Power Co,1870.7,UPI
+T043,C01,2026-03-10,Routine payment,ABC Corp Payroll,1889.72,UPI
+T044,C01,2026-03-13,Routine payment,Cafe Aroma,4669.16,UPI
+T045,C01,2026-03-14,Routine payment,Metro Rent Mgmt,5941.23,UPI
+T046,C01,2026-03-15,Routine payment,Fresh Mart,5124.41,UPI
+T047,C01,2026-03-16,Routine payment,Metro Rent Mgmt,4068.64,UPI
+T048,C01,2026-03-17,Routine payment,Fresh Mart,1833.37,UPI
+T049,C01,2026-03-20,Routine payment,Cafe Aroma,3967.37,UPI
+T050,C01,2026-03-24,Routine payment,ABC Corp Payroll,4044.45,ONLINE
+T051,C01,2026-03-25,Routine payment,Fresh Mart,3937.22,ONLINE
+T052,C01,2026-03-26,Routine payment,City Power Co,2414.71,UPI
+T053,C01,2026-03-29,Routine payment,City Power Co,6255.58,ONLINE
+T054,C01,2026-03-30,Routine payment,City Power Co,3584.35,ONLINE
+T055,C01,2026-03-31,Routine payment,ABC Corp Payroll,6595.85,UPI
+T056,C01,2026-04-01,Routine payment,ABC Corp Payroll,3826.54,ONLINE
+T057,C01,2026-04-02,Routine payment,ABC Corp Payroll,2697.35,UPI
+T058,C01,2026-04-03,Routine payment,Cafe Aroma,1835.27,UPI
+T059,C01,2026-04-05,Routine payment,Fresh Mart,4712.98,UPI
+T060,C01,2026-04-07,Routine payment,Cafe Aroma,2365.88,ONLINE
+T061,C01,2026-04-08,Routine payment,Fresh Mart,6182.38,UPI
+T062,C01,2026-04-10,Large transfer,Fresh Mart,42000.0,UPI
+T063,C01,2026-04-10,Payment,QuickCash Traders,5000.0,UPI
+T064,C01,2026-04-10,Payment,QuickCash Traders,4800.0,UPI
+T065,C01,2026-04-11,Payment,QuickCash Traders,5200.0,UPI
+T066,C01,2026-04-11,Payment,QuickCash Traders,4950.0,UPI
+T067,C01,2026-04-10,Routine payment,Cafe Aroma,1800.0,UPI
+T068,C01,2026-04-10,Routine payment,City Power Co,2200.0,UPI
+T069,C01,2026-04-11,Payment,QuickCash Traders,5100.0,CARD
+T070,C01,2026-04-11,Payment,Unknown Vendor LLC,3000.0,CARD
