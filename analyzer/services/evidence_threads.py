@@ -111,3 +111,49 @@ def _build_summary_metadata(signals, transaction_ids, txn_by_id):
         "total_amount": total_amount,
         "max_severity": max((s["severity"] for s in signals), key=lambda sev: ["low", "medium", "high"].index(sev)),
     }
+
+def build_evidence_threads(customer_id, transactions, signals, baseline):
+    """Clusters signals into threads of related activity, with metadata for triage and investigation."""
+    if not signals:
+        return []
+
+    txn_by_id = {t["transaction_id"]: t for t in transactions}
+    txn_dates_by_id = {tid: _parse_date(t["date"]) for tid, t in txn_by_id.items()}
+    valid_ids = set(txn_by_id.keys())
+
+    clusters = _cluster_signals(signals, txn_dates_by_id)
+
+    threads = []
+    for index, cluster_signals in enumerate(clusters, start=1):
+        transaction_ids = sorted(
+            {tid for s in cluster_signals for tid in s["transaction_ids"] if tid in valid_ids}
+        )
+        if not transaction_ids:
+            continue  # defensive: a cluster with no traceable transactions is not a thread
+
+        dates = [txn_dates_by_id[tid] for tid in transaction_ids if tid in txn_dates_by_id]
+
+        thread = {
+            "thread_id": f"THREAD_{index:03d}",
+            "customer_id": customer_id,
+            "transaction_ids": transaction_ids,
+            "signal_types": sorted({s["signal_type"] for s in cluster_signals}),
+            "time_range": {
+                "start": min(dates).isoformat() if dates else None,
+                "end": max(dates).isoformat() if dates else None,
+            },
+            "priority": classify_thread_priority(cluster_signals),
+            "signals": cluster_signals,
+            "summary_metadata": _build_summary_metadata(cluster_signals, transaction_ids, txn_by_id),
+        }
+        threads.append(thread)
+
+    # Sort most important first: HIGH > MEDIUM > LOW, then earliest first
+    priority_rank = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
+    threads.sort(key=lambda t: (priority_rank[t["priority"]], t["time_range"]["start"] or ""))
+
+    # Re-number thread IDs after sorting so THREAD_001 is always the top priority
+    for index, thread in enumerate(threads, start=1):
+        thread["thread_id"] = f"THREAD_{index:03d}"
+
+    return threads
