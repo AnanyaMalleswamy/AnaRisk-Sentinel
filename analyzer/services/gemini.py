@@ -39,3 +39,63 @@ RESPONSE_SCHEMA = {
     },
     "required": ["assessment", "key_findings", "behavioral_change", "investigator_priority", "recommended_review"],
 }
+
+def build_evidence_payload(customer_id, transactions, baseline, signals, threads, classification):
+    """Compact, structured evidence -- never the raw CSV."""
+    txn_by_id = {t["transaction_id"]: t for t in transactions}
+
+    cited_ids = set()
+    for s in signals[:MAX_SIGNALS_IN_PAYLOAD]:
+        cited_ids.update(s["transaction_ids"])
+    for t in threads[:MAX_THREADS_IN_PAYLOAD]:
+        cited_ids.update(t["transaction_ids"])
+    cited_ids = list(cited_ids)[:MAX_CITED_TRANSACTIONS]
+
+    relevant_transactions = [
+        {
+            "transaction_id": tid,
+            "date": txn_by_id[tid]["date"],
+            "amount": txn_by_id[tid]["amount"],
+            "payee": txn_by_id[tid]["payee"],
+            "channel": txn_by_id[tid]["channel"],
+        }
+        for tid in cited_ids if tid in txn_by_id
+    ]
+
+    return {
+        "customer_id": customer_id,
+        "classification": classification,
+        "baseline_summary": {
+            "transaction_count": baseline["transaction_count"],
+            "history_strength": baseline["history_strength"],
+            "history_start": baseline["history_start"],
+            "history_end": baseline["history_end"],
+            "amount_profile": baseline["amount_profile"],
+            "dominant_channel": baseline["channel_profile"]["dominant_channel"],
+            "transactions_per_week": baseline["frequency_profile"]["transactions_per_week"],
+        },
+        "signals": [
+            {
+                "signal_type": s["signal_type"],
+                "severity": s["severity"],
+                "reason": s["reason"],
+                "transaction_ids": s["transaction_ids"],
+            }
+            for s in signals[:MAX_SIGNALS_IN_PAYLOAD]
+        ],
+        "threads": [
+            {
+                "thread_id": t["thread_id"],
+                "priority": t["priority"],
+                "signal_types": t["signal_types"],
+                "time_range": t["time_range"],
+                "transaction_ids": t["transaction_ids"],
+            }
+            for t in threads[:MAX_THREADS_IN_PAYLOAD]
+        ],
+        "relevant_transactions": relevant_transactions,
+    }
+
+
+def _extract_referenced_ids(text):
+    return set(_ID_TOKEN_PATTERN.findall(text or ""))
