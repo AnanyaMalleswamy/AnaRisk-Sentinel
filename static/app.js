@@ -112,6 +112,17 @@ document.addEventListener("DOMContentLoaded", () => {
       resetResultBlock(resultBlocks.transactionsOfInterest, "No transactions flagged.");
     }
 
+    function renderNarrative(narrative) {
+    const lines = [
+      `Assessment: ${narrative.assessment}`,
+      `Key findings: ${narrative.key_findings.join(" | ")}`,
+      `Behavioral change: ${narrative.behavioral_change}`,
+      `Investigator priority: ${narrative.investigator_priority}`,
+      `Recommended review: ${narrative.recommended_review.join(" | ")}`,
+    ];
+    resetResultBlock(resultBlocks.investigationSummary, lines.join(" — "));
+    }
+
     const b = data.baseline;
     resetResultBlock(
       resultBlocks.customerBaseline,
