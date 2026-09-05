@@ -237,9 +237,7 @@ function renderNarrative(narrative) {
     );
     return;
   }
-    generatePdfBtn.addEventListener("click", () => {
-    window.location.href = "/api/generate-pdf/";
-    });
+   
 
     const csrfToken = csrfTokenElement.value;
 
@@ -269,7 +267,13 @@ function renderNarrative(narrative) {
         generateReportBtn.textContent = "Generate Investigation Report";
       });
     });  
+
   });
+
+   generatePdfBtn.addEventListener("click", () => {
+    console.log("Generating PDF report...");
+    window.location.href = "/api/generate-pdf/";
+    });
 
   // ---- File selected ----
   fileInput.addEventListener("change", () => {
