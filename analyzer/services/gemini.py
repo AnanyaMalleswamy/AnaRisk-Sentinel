@@ -123,3 +123,47 @@ def _get_client():
         )
     return genai.Client(api_key=api_key)
 
+def generate_investigation_narrative(evidence_payload):
+    """Exactly ONE Gemini call. No retries, no fallback model."""
+    client = _get_client()
+    valid_ids = {t["transaction_id"] for t in evidence_payload.get("relevant_transactions", [])}
+
+    contents = (
+        "Deterministic investigation evidence (JSON). Base your entire response on this data only:\n\n"
+        + json.dumps(evidence_payload, indent=2)
+    )
+
+    try:
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction=SYSTEM_PROMPT,
+                response_mime_type="application/json",
+                response_json_schema=RESPONSE_SCHEMA,
+                temperature=0.2,
+            ),
+        )
+    except Exception as exc:
+        raise GeminiRequestError(f"Gemini API request failed: {exc}") from exc
+
+    raw_text = getattr(response, "text", None)
+    if not raw_text:
+        raise GeminiResponseError("Gemini returned an empty response.")
+
+    try:
+        narrative = json.loads(raw_text)
+    except json.JSONDecodeError as exc:
+        raise GeminiResponseError(f"Gemini returned malformed JSON: {exc}") from exc
+
+    required_keys = set(RESPONSE_SCHEMA["required"])
+    if not required_keys.issubset(narrative.keys()):
+        raise GeminiResponseError("Gemini response is missing required fields.")
+
+    invented_ids = validate_narrative_traceability(narrative, valid_ids)
+    if invented_ids:
+        raise GeminiResponseError(
+            f"Gemini referenced transaction ID(s) not present in the supplied evidence: {sorted(invented_ids)}"
+        )
+
+    return narrative
