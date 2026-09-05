@@ -1,7 +1,10 @@
 from django.shortcuts import render
+from django.tasks import signals
+from analyzer.services import baseline
 from analyzer.services.parser import CSVValidationError, parse_transactions_csv
 from analyzer.services.baseline import build_baseline_for_customer
 from analyzer.services.rules import generate_signals, classify_overall
+from analyzer.services.evidence_threads import build_evidence_threads
 # Create your views here.
 def index(request):
     return render(request, "index.html")
@@ -33,6 +36,7 @@ def analyze(request):
     customer_id = transactions[0]["customer_id"]
     baseline = build_baseline_for_customer(customer_id, transactions)
     signals = generate_signals(customer_id, transactions, baseline)
+    threads = build_evidence_threads(customer_id, transactions, signals, baseline)
     classification = classify_overall(signals, baseline)
 
     return JsonResponse({
@@ -41,5 +45,6 @@ def analyze(request):
         "classification": classification,
         "baseline": baseline,
         "signals": signals,
+        "threads": threads,
         "preview": transactions[:5],
     })
