@@ -51,6 +51,19 @@ document.addEventListener("DOMContentLoaded", () => {
       resultBlocks.transactionsOfInterest,
       "Flagged transactions will appear here after analysis."
     );
+    
+    if (Array.isArray(data.threads) && data.threads.length > 0) {
+      const threadsText = data.threads
+        .map((t) => {
+          const signalList = t.signal_types.join(", ");
+          return `${t.thread_id} [Priority: ${t.priority}] ${t.time_range.start} to ${t.time_range.end} — ` +
+                 `Transactions: ${t.transaction_ids.join(", ")} — Signals: ${signalList}`;
+        })
+        .join(" | ");
+      resetResultBlock(resultBlocks.investigatorPriority, `Investigation Threads: ${threadsText}`);
+    } else {
+      resetResultBlock(resultBlocks.investigatorPriority, "No investigation threads identified.");
+    }
 
     resetResultBlock(
       resultBlocks.customerBaseline,
