@@ -7,7 +7,7 @@ from google.genai import types
 from dotenv import load_dotenv
 load_dotenv()
 
-GEMINI_MODEL = "gemini-2.5-flash"  # cheap/fast model choice for quota reasons
+GEMINI_MODEL = "gemini-3.6-flash"  # cheap/fast model choice for quota reasons
 
 MAX_SIGNALS_IN_PAYLOAD = 10
 MAX_THREADS_IN_PAYLOAD = 5
@@ -406,18 +406,27 @@ def _extract_referenced_ids(text):
     return set(_ID_TOKEN_PATTERN.findall(text or ""))
 
 
-def validate_narrative_traceability(narrative, valid_transaction_ids):
-    """Returns the set of any transaction-ID-shaped tokens Gemini mentioned
-    that were NOT in the evidence it was given. Empty set = clean."""
-    referenced = set()
-    referenced |= _extract_referenced_ids(narrative.get("assessment", ""))
-    for finding in narrative.get("key_findings", []):
-        referenced |= _extract_referenced_ids(finding)
-    referenced |= _extract_referenced_ids(narrative.get("behavioral_change", ""))
-    referenced |= _extract_referenced_ids(narrative.get("investigator_priority", ""))
-    for step in narrative.get("recommended_review", []):
-        referenced |= _extract_referenced_ids(step)
-    return referenced - set(valid_transaction_ids)
+def validate_narrative_traceability(narrative, valid_transaction_ids, customer_id):
+    """Ensure Gemini does not invent transaction IDs."""
+
+    valid_ids = set(valid_transaction_ids)
+
+    all_text_parts = [
+        narrative.get("assessment", ""),
+        narrative.get("behavioral_change", ""),
+        narrative.get("investigator_priority", ""),
+        *narrative.get("key_findings", []),
+        *narrative.get("recommended_review", []),
+    ]
+
+    combined_text = " ".join(all_text_parts)
+
+    candidate_ids = _extract_referenced_ids(combined_text)
+
+    # Customer IDs are identifiers too, but they are not transaction IDs.
+    candidate_ids.discard(customer_id)
+
+    return candidate_ids - valid_ids
 
 
 def _get_client():
@@ -464,8 +473,12 @@ def generate_investigation_narrative(evidence_payload):
     required_keys = set(RESPONSE_SCHEMA["required"])
     if not required_keys.issubset(narrative.keys()):
         raise GeminiResponseError("Gemini response is missing required fields.")
-
-    invented_ids = validate_narrative_traceability(narrative, valid_ids)
+    
+    invented_ids = validate_narrative_traceability(
+    narrative,
+    valid_ids,
+    evidence_payload.get("customer_id"),
+)
     if invented_ids:
         raise GeminiResponseError(
             f"Gemini referenced transaction ID(s) not present in the supplied evidence: {sorted(invented_ids)}"

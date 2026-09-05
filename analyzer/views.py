@@ -82,11 +82,17 @@ def generate_report(request):
         narrative = generate_investigation_narrative(evidence_payload)
     except GeminiConfigError as exc:
         return JsonResponse({"status": "error", "message": str(exc)}, status=503)
-    except GeminiRequestError:
+    
+    except GeminiRequestError as exc:
+        print("🔥 GEMINI REQUEST ERROR:", repr(exc))
         return JsonResponse(
-            {"status": "error", "message": "AI narrative service is temporarily unavailable."},
-            status=502,
-        )
+        {
+            "status": "error",
+            "message": str(exc),
+        },
+        status=502,
+    )
+    
     except GeminiResponseError as exc:
         return JsonResponse({"status": "error", "message": str(exc)}, status=502)
 
