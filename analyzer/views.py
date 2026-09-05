@@ -100,18 +100,66 @@ def generate_report(request):
 
     return JsonResponse({"status": "success", "narrative": narrative})
 
+@require_POST
 def generate_pdf_report(request):
-    if request.method != "GET":
+    """Generate a PDF from deterministic analysis data and optional AI narrative."""
+
+    uploaded_file = request.FILES.get("file")
+
+    if not uploaded_file:
         return JsonResponse(
-            {"status": "error", "message": "GET request required."},
-            status=405,
+            {"status": "error", "message": "No file was uploaded."},
+            status=400,
         )
 
-    pdf_buffer = generate_pdf()
+    try:
+        transactions = parse_transactions_csv(uploaded_file)
+    except CSVValidationError as exc:
+        return JsonResponse(
+            {"status": "error", "message": str(exc)},
+            status=400,
+        )
+
+    customer_id = transactions[0]["customer_id"]
+
+    baseline = build_baseline_for_customer(
+        customer_id,
+        transactions,
+    )
+
+    signals = generate_signals(
+        customer_id,
+        transactions,
+        baseline,
+    )
+
+    threads = build_evidence_threads(
+        customer_id,
+        transactions,
+        signals,
+        baseline,
+    )
+
+    classification = classify_overall(
+        signals,
+        baseline,
+    )
+
+    report_data = {
+        "customer_id": customer_id,
+        "classification": classification,
+        "baseline": baseline,
+        "signals": signals,
+        "threads": threads,
+        "transactions": transactions,
+        "narrative": None,
+    }
+
+    pdf_buffer = generate_pdf(report_data)
 
     return FileResponse(
         pdf_buffer,
         as_attachment=True,
-        filename="investigation_report.pdf",
+        filename=f"investigation_report_{customer_id}.pdf",
         content_type="application/pdf",
     )
