@@ -16,3 +16,39 @@ MIN_COUNT_FOR_QUARTILES = 4
 # How many top recurring payees to surface explicitly.
 TOP_RECURRING_PAYEES_LIMIT = 5
 
+def _parse_date(date_str):
+    return datetime.strptime(date_str, "%Y-%m-%d").date()
+
+
+def _empty_baseline(customer_id=None):
+    """Safe, well-defined baseline for zero transactions."""
+    return {
+        "customer_id": customer_id,
+        "transaction_count": 0,
+        "history_start": None,
+        "history_end": None,
+        "history_days": 0,
+        "history_strength": "sparse",
+        "amount_profile": {
+            "median": None,
+            "typical_lower": None,
+            "typical_upper": None,
+            "minimum": None,
+            "maximum": None,
+        },
+        "payee_profile": {
+            "unique_payee_count": 0,
+            "payees": {},
+            "recurring_payees": [],
+        },
+        "channel_profile": {
+            "distribution": {},
+            "proportions": {},
+            "dominant_channel": None,
+        },
+        "frequency_profile": {
+            "average_gap_days": None,
+            "median_gap_days": None,
+            "transactions_per_week": None,
+        },
+    }
