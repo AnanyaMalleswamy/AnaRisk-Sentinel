@@ -12,6 +12,8 @@ from analyzer.services.gemini import (
     build_evidence_payload,
     generate_investigation_narrative,
 )
+from django.http import FileResponse
+from .services.pdf_report import generate_pdf
 # Create your views here.
 def index(request):
     return render(request, "index.html")
@@ -92,8 +94,24 @@ def generate_report(request):
         },
         status=502,
     )
-    
+
     except GeminiResponseError as exc:
         return JsonResponse({"status": "error", "message": str(exc)}, status=502)
 
     return JsonResponse({"status": "success", "narrative": narrative})
+
+def generate_pdf_report(request):
+    if request.method != "GET":
+        return JsonResponse(
+            {"status": "error", "message": "GET request required."},
+            status=405,
+        )
+
+    pdf_buffer = generate_pdf()
+
+    return FileResponse(
+        pdf_buffer,
+        as_attachment=True,
+        filename="investigation_report.pdf",
+        content_type="application/pdf",
+    )
