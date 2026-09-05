@@ -69,3 +69,45 @@ def _cluster_signals(signals, txn_dates_by_id):
         clusters.setdefault(root, []).append(signals[i])
 
     return list(clusters.values())
+
+def classify_thread_priority(signals):
+    """Deterministic, explainable investigative-attention level — not a fraud score."""
+    distinct_types = {s["signal_type"] for s in signals}
+    high_severity_count = sum(1 for s in signals if s["severity"] == "high")
+
+    if (
+        len(distinct_types) >= THREAD_PRIORITY_HIGH_MIN_SIGNAL_TYPES
+        or (
+            high_severity_count >= THREAD_PRIORITY_HIGH_MIN_SIGNALS_WITH_HIGH_SEVERITY
+            and len(signals) >= THREAD_PRIORITY_HIGH_MIN_SIGNAL_COUNT
+        )
+    ):
+        return "HIGH"
+
+    if len(signals) >= THREAD_PRIORITY_MEDIUM_MIN_SIGNAL_COUNT or high_severity_count >= 1:
+        return "MEDIUM"
+
+    return "LOW"
+
+
+def _build_summary_metadata(signals, transaction_ids, txn_by_id):
+    thread_txns = [txn_by_id[tid] for tid in transaction_ids if tid in txn_by_id]
+
+    new_payees = sorted({
+        s["evidence"]["payee"]
+        for s in signals
+        if s["signal_type"] == "NEW_PAYEE_BURST" and "payee" in s.get("evidence", {})
+    })
+
+    channels_involved = sorted({t["channel"] for t in thread_txns})
+    total_amount = round(sum(t["amount"] for t in thread_txns), 2)
+
+    return {
+        "transaction_count": len(transaction_ids),
+        "signal_count": len(signals),
+        "signal_types": sorted({s["signal_type"] for s in signals}),
+        "new_payees_involved": new_payees,
+        "channels_involved": channels_involved,
+        "total_amount": total_amount,
+        "max_severity": max((s["severity"] for s in signals), key=lambda sev: ["low", "medium", "high"].index(sev)),
+    }
