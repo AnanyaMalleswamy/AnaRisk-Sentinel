@@ -87,6 +87,7 @@ def _build_amount_profile(amounts):
         "minimum": round(minimum, 2),
         "maximum": round(maximum, 2),
     }
+
 def _build_payee_profile(transactions):
     payees = defaultdict(lambda: {"count": 0, "first_seen": None, "last_seen": None})
 
@@ -164,17 +165,6 @@ def _build_frequency_profile(transaction_dates, history_days, transaction_count)
 
 
 def build_baseline_for_customer(customer_id, transactions):
-    """
-    Build a behavioral baseline for ONE customer's transactions.
-
-    Args:
-        customer_id: identifier for logging/labeling only.
-        transactions: list of parsed transaction dicts (all assumed to
-            belong to this customer).
-
-    Returns:
-        dict: structured baseline (see module docstring / Phase 8 spec).
-    """
     if not transactions:
         return _empty_baseline(customer_id)
 
@@ -197,4 +187,13 @@ def build_baseline_for_customer(customer_id, transactions):
         "payee_profile": _build_payee_profile(transactions),
         "channel_profile": _build_channel_profile(transactions),
         "frequency_profile": _build_frequency_profile(dates, history_days, transaction_count),
+    }
+def build_customer_baselines(transactions):
+    by_customer = defaultdict(list)
+    for txn in transactions:
+        by_customer[txn["customer_id"]].append(txn)
+
+    return {
+        customer_id: build_baseline_for_customer(customer_id, customer_txns)
+        for customer_id, customer_txns in by_customer.items()
     }
