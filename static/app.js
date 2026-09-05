@@ -112,17 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
       resetResultBlock(resultBlocks.transactionsOfInterest, "No transactions flagged.");
     }
 
-    function renderNarrative(narrative) {
-    const lines = [
-      `Assessment: ${narrative.assessment}`,
-      `Key findings: ${narrative.key_findings.join(" | ")}`,
-      `Behavioral change: ${narrative.behavioral_change}`,
-      `Investigator priority: ${narrative.investigator_priority}`,
-      `Recommended review: ${narrative.recommended_review.join(" | ")}`,
-    ];
-    resetResultBlock(resultBlocks.investigationSummary, lines.join(" — "));
-    }
-
     const b = data.baseline;
     resetResultBlock(
       resultBlocks.customerBaseline,
@@ -156,6 +145,17 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     }
 }
+
+function renderNarrative(narrative) {
+    const lines = [
+      `Assessment: ${narrative.assessment}`,
+      `Key findings: ${narrative.key_findings.join(" | ")}`,
+      `Behavioral change: ${narrative.behavioral_change}`,
+      `Investigator priority: ${narrative.investigator_priority}`,
+      `Recommended review: ${narrative.recommended_review.join(" | ")}`,
+    ];
+    resetResultBlock(resultBlocks.investigationSummary, lines.join(" — "));
+    }
 
   // ---- Render error ----
   function renderError(message) {
@@ -225,6 +225,19 @@ document.addEventListener("DOMContentLoaded", () => {
       setFileStatus("Please select a CSV file (not the sample) before generating an AI report.");
       return;
     }
+     const csrfTokenElement = document.querySelector(
+    "[name=csrfmiddlewaretoken]"
+  );
+
+  if (!csrfTokenElement) {
+    resetResultBlock(
+      resultBlocks.investigationSummary,
+      "AI report unavailable: CSRF token not found."
+    );
+    return;
+  }
+
+    const csrfToken = csrfTokenElement.value;
 
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
@@ -232,7 +245,11 @@ document.addEventListener("DOMContentLoaded", () => {
     generateReportBtn.disabled = true;
     generateReportBtn.textContent = "Generating report...";
 
-    fetch("/api/generate-report/", { method: "POST", body: formData })
+    fetch("/api/generate-report/", { method: "POST",
+        headers:{
+            "X-CSRFToken": csrfToken,} 
+        ,body: formData })
+
       .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
       .then(({ ok, data }) => {
         if (!ok || data.status !== "success") {
