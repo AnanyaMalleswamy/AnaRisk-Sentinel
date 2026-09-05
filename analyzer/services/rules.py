@@ -180,3 +180,52 @@ def detect_behavioral_break(customer_id, transactions, baseline):
         },
     })
     return signals
+
+#Signal 4: activity burst
+def detect_activity_burst(transactions, baseline):
+    signals = []
+    expected_per_week = baseline.get("frequency_profile", {}).get("transactions_per_week")
+    if not transactions or not expected_per_week:
+        return signals
+
+    expected_count_in_window = (expected_per_week / 7) * ACTIVITY_BURST_WINDOW_DAYS
+
+    sorted_txns = sorted(transactions, key=lambda t: t["date"])
+    dates = [_parse_date(t["date"]) for t in sorted_txns]
+
+    best = None
+    left = 0
+    for right in range(len(sorted_txns)):
+        while (dates[right] - dates[left]).days > ACTIVITY_BURST_WINDOW_DAYS:
+            left += 1
+        count = right - left + 1
+        if count >= ACTIVITY_BURST_MIN_COUNT and count > expected_count_in_window * ACTIVITY_BURST_MULTIPLIER:
+            if best is None or count > best["count"]:
+                best = {
+                    "count": count,
+                    "start": dates[left],
+                    "end": dates[right],
+                    "transaction_ids": [sorted_txns[i]["transaction_id"] for i in range(left, right + 1)],
+                }
+
+    if best:
+        severity = "high" if best["count"] > expected_count_in_window * ACTIVITY_BURST_MULTIPLIER * 2 else "medium"
+        signals.append({
+            "signal_type": "ACTIVITY_BURST",
+            "transaction_ids": best["transaction_ids"],
+            "severity": severity,
+            "reason": (
+                f"{best['count']} transactions occurred between {best['start']} and {best['end']} "
+                f"({ACTIVITY_BURST_WINDOW_DAYS}-day window), vs an expected ~{round(expected_count_in_window, 1)} "
+                f"based on this customer's typical rate of {round(expected_per_week, 2)}/week."
+            ),
+            "evidence": {
+                "window_days": ACTIVITY_BURST_WINDOW_DAYS,
+                "observed_count": best["count"],
+                "expected_count": round(expected_count_in_window, 2),
+                "customer_transactions_per_week": expected_per_week,
+                "window_start": best["start"].isoformat(),
+                "window_end": best["end"].isoformat(),
+            },
+        })
+    return signals
