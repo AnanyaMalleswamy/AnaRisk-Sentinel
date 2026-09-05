@@ -443,7 +443,7 @@ def generate_investigation_narrative(evidence_payload):
             config=types.GenerateContentConfig(
                 system_instruction=SYSTEM_PROMPT,
                 response_mime_type="application/json",
-                response_json_schema=RESPONSE_SCHEMA,
+                response_schema=RESPONSE_SCHEMA,
                 temperature=0.2,
             ),
         )
