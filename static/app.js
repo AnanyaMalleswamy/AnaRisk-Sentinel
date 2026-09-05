@@ -83,45 +83,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ---- Render backend result ----
+ 
+  // Backend result rendering
   function renderBackendResult(data) {
     resetResultBlock(
       resultBlocks.riskStatus,
-      `Parsed successfully — ${data.transaction_count} transaction(s) found.`
+      `${data.classification} — ${data.transaction_count} transaction(s) analyzed.`
     );
 
-    if (Array.isArray(data.preview) && data.preview.length > 0) {
-      const previewText = data.preview
-        .map(
-          (transaction) =>
-            `${transaction.transaction_id}: ${transaction.amount} (${transaction.channel})`
-        )
-        .join(" | ");
+    if (Array.isArray(data.signals) && data.signals.length > 0) {
+      const indicatorsText = data.signals
+        .map((s) => `${s.signal_type} [${s.severity}]`)
+        .join(", ");
+      resetResultBlock(resultBlocks.riskIndicators, indicatorsText);
 
-      resetResultBlock(
-        resultBlocks.transactionsOfInterest,
-        previewText
-      );
+      const detailsText = data.signals
+        .map((s) => `${s.signal_type}: ${s.reason} (Transactions: ${s.transaction_ids.join(", ")})`)
+        .join(" | ");
+      resetResultBlock(resultBlocks.transactionsOfInterest, detailsText);
     } else {
-      resetResultBlock(
-        resultBlocks.transactionsOfInterest,
-        "No transactions to preview."
-      );
+      resetResultBlock(resultBlocks.riskIndicators, "No behavioral signals detected.");
+      resetResultBlock(resultBlocks.transactionsOfInterest, "No transactions flagged.");
     }
 
-    resetResultBlock(
-      resultBlocks.riskIndicators,
-      "Risk calculation not implemented in this phase."
-    );
-
+    const b = data.baseline;
     resetResultBlock(
       resultBlocks.customerBaseline,
-      "Baseline calculation not implemented in this phase."
+      `History strength: ${b.history_strength} | ${b.transaction_count} transactions over ${b.history_days} days | ` +
+      `Typical amount: ${b.amount_profile.typical_lower}–${b.amount_profile.typical_upper} | ` +
+      `Usual channel: ${b.channel_profile.dominant_channel} | ~${b.frequency_profile.transactions_per_week ?? "N/A"} txns/week`
     );
 
     resetResultBlock(
       resultBlocks.investigationSummary,
-      "CSV parsing verified. Investigation summary not implemented in this phase."
+      `${data.signals.length} behavioral signal(s) detected. Overall classification: ${data.classification}.`
     );
   }
 
