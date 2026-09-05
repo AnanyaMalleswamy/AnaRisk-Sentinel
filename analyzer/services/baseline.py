@@ -87,3 +87,114 @@ def _build_amount_profile(amounts):
         "minimum": round(minimum, 2),
         "maximum": round(maximum, 2),
     }
+def _build_payee_profile(transactions):
+    payees = defaultdict(lambda: {"count": 0, "first_seen": None, "last_seen": None})
+
+    for txn in transactions:
+        payee = txn["payee"]
+        txn_date = txn["date"]  # already an ISO string from parser.py
+        entry = payees[payee]
+        entry["count"] += 1
+        if entry["first_seen"] is None or txn_date < entry["first_seen"]:
+            entry["first_seen"] = txn_date
+        if entry["last_seen"] is None or txn_date > entry["last_seen"]:
+            entry["last_seen"] = txn_date
+
+    recurring = sorted(
+        (name for name, info in payees.items() if info["count"] > 1),
+        key=lambda name: payees[name]["count"],
+        reverse=True,
+    )[:TOP_RECURRING_PAYEES_LIMIT]
+
+    return {
+        "unique_payee_count": len(payees),
+        "payees": dict(payees),
+        "recurring_payees": recurring,
+    }
+
+
+def _build_channel_profile(transactions):
+    distribution = defaultdict(int)
+    for txn in transactions:
+        distribution[txn["channel"]] += 1
+
+    total = sum(distribution.values())
+    proportions = {
+        channel: round(count / total, 3)
+        for channel, count in distribution.items()
+    }
+    dominant_channel = max(distribution, key=distribution.get)
+
+    return {
+        "distribution": dict(distribution),
+        "proportions": proportions,
+        "dominant_channel": dominant_channel,
+    }
+
+
+def _build_frequency_profile(transaction_dates, history_days, transaction_count):
+    sorted_dates = sorted(transaction_dates)
+
+    if len(sorted_dates) < 2:
+        return {
+            "average_gap_days": None,
+            "median_gap_days": None,
+            "transactions_per_week": None,
+        }
+
+    gaps = [
+        (sorted_dates[i] - sorted_dates[i - 1]).days
+        for i in range(1, len(sorted_dates))
+    ]
+
+    average_gap = round(statistics.mean(gaps), 2)
+    median_gap = round(statistics.median(gaps), 2)
+
+    transactions_per_week = (
+        round(transaction_count / (history_days / 7), 2)
+        if history_days > 0
+        else None  # all activity on a single day — rate is undefined, not zero
+    )
+
+    return {
+        "average_gap_days": average_gap,
+        "median_gap_days": median_gap,
+        "transactions_per_week": transactions_per_week,
+    }
+
+
+def build_baseline_for_customer(customer_id, transactions):
+    """
+    Build a behavioral baseline for ONE customer's transactions.
+
+    Args:
+        customer_id: identifier for logging/labeling only.
+        transactions: list of parsed transaction dicts (all assumed to
+            belong to this customer).
+
+    Returns:
+        dict: structured baseline (see module docstring / Phase 8 spec).
+    """
+    if not transactions:
+        return _empty_baseline(customer_id)
+
+    amounts = [txn["amount"] for txn in transactions]
+    dates = [_parse_date(txn["date"]) for txn in transactions]
+
+    history_start = min(dates)
+    history_end = max(dates)
+    history_days = (history_end - history_start).days
+    transaction_count = len(transactions)
+
+    return {
+        "customer_id": customer_id,
+        "transaction_count": transaction_count,
+        "history_start": history_start.isoformat(),
+        "history_end": history_end.isoformat(),
+        "history_days": history_days,
+        "history_strength": classify_history_strength(transaction_count, history_days),
+        "amount_profile": _build_amount_profile(amounts),
+        "payee_profile": _build_payee_profile(transactions),
+        "channel_profile": _build_channel_profile(transactions),
+        "frequency_profile": _build_frequency_profile(dates, history_days, transaction_count),
+    }
