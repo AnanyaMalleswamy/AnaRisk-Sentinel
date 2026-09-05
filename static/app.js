@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadSampleBtn = document.getElementById("load-sample-btn");
   const uploadForm = document.getElementById("upload-form");
   const generateReportBtn = document.getElementById("generate-report-btn");
+  const generatePdfBtn = document.getElementById("generate-pdf-btn");
 
   const resultBlocks = {
     riskStatus: document.getElementById("risk-status"),
@@ -236,6 +237,9 @@ function renderNarrative(narrative) {
     );
     return;
   }
+    generatePdfBtn.addEventListener("click", () => {
+    window.location.href = "/api/generate-pdf/";
+    });
 
     const csrfToken = csrfTokenElement.value;
 

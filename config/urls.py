@@ -19,10 +19,12 @@ from django.urls import path
 from django.shortcuts import render
 from analyzer.views import analyze, index
 from analyzer.views import analyze, generate_report, index
+from analyzer.views import generate_pdf_report
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", lambda request: render(request, "index.html")),
     path("api/analyze/", analyze, name="analyze"),
     path("api/generate-report/", generate_report, name="generate_report")
+    path("api/generate-pdf/",generate_pdf_report,name="generate_pdf_report",),
 ]
