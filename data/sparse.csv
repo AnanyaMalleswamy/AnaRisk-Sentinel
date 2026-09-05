@@ -1,0 +1,4 @@
+transaction_id,customer_id,date,description,payee,amount,channel
+T001,C10,2026-02-10,Account activation,Fresh Mart,500.00,UPI
+T002,C10,2026-03-01,Routine payment,Cafe Aroma,200.00,UPI
+T003,C10,2026-04-09,Overseas transfer,Offshore Direct Inc,98000.00,WIRE

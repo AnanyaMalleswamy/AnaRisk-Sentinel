@@ -111,22 +111,25 @@ document.addEventListener("DOMContentLoaded", () => {
     let badgeColor = "#10b981"; // Green default
     let badgeBg = "rgba(16, 185, 129, 0.15)";
     let riskLabel = "LOW RISK";
+    let targetGroupId = "queue-group-low";
 
     if (signalCount >= 4 || classificationLower.includes("high") || classificationLower.includes("critical") || classificationLower.includes("suspicious")) {
       badgeColor = "#e11d48"; // Red (High risk)
       badgeBg = "rgba(225, 29, 72, 0.15)";
       riskLabel = "HIGH RISK";
-    } else if (signalCount > 0 || classificationLower.includes("medium") || classificationLower.includes("elevated") || classificationLower.includes("warning")) {
+      targetGroupId = "queue-group-high";
+    } else if (signalCount >1 || classificationLower.includes("medium") || classificationLower.includes("elevated") || classificationLower.includes("warning")) {
       badgeColor = "#d97706"; // Gold/Amber (Elevated)
       badgeBg = "rgba(217, 119, 6, 0.15)";
       riskLabel = "ELEVATED";
+      targetGroupId = "queue-group-elevated";
     }
 
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const displayName = customerName ? customerName : fileName;
 
     const logItem = document.createElement("div");
-    logItem.className = "report-item risk-high";
+    logItem.className = "report-item";
     logItem.style.borderLeftColor = badgeColor;
 
     logItem.innerHTML = `
@@ -137,7 +140,15 @@ document.addEventListener("DOMContentLoaded", () => {
       <span class="status-badge" style="color: ${badgeColor}; background: ${badgeBg};">${riskLabel}</span>
     `;
 
-    auditedReportsQueue.prepend(logItem);
+    const targetGroup = document.getElementById(targetGroupId);
+    if (targetGroup) {
+      const itemsContainer = targetGroup.querySelector(".queue-group-items");
+      if (itemsContainer) {
+        itemsContainer.prepend(logItem); // Inserts into specific risk level container
+      }
+    } else {
+      auditedReportsQueue.prepend(logItem); // Fallback if risk groups are not in HTML
+    }
   }
 
   // ---- Loading state ----

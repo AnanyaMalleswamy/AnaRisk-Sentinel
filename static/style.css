@@ -565,3 +565,20 @@ body {
   margin-top: 20px;
   font-weight: 600;
 }
+.queue-group {
+  margin-bottom: 16px;
+}
+
+.queue-group-header {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.risk-high-header { color: #fecdd3; background: rgba(225, 29, 72, 0.2); }
+.risk-elevated-header { color: #fde68a; background: rgba(217, 119, 6, 0.2); }
+.risk-low-header { color: #a7f3d0; background: rgba(16, 185, 129, 0.2); }

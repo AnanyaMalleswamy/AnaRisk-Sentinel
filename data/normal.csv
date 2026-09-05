@@ -1,0 +1,11 @@
+transaction_id,customer_id,date,description,payee,amount,channel
+T001,C01,2026-01-02,Coffee purchase,Cafe Aroma,250.00,UPI
+T002,C01,2026-01-05,Grocery shopping,Fresh Mart,1850.50,UPI
+T003,C01,2026-01-10,Utility bill,City Power Co,3200.00,ONLINE
+T004,C01,2026-01-15,Monthly rent,Metro Rent Mgmt,15000.00,ONLINE
+T005,C01,2026-01-20,Grocery shopping,Fresh Mart,2100.00,UPI
+T006,C01,2026-01-25,Coffee purchase,Cafe Aroma,180.00,UPI
+T007,C01,2026-02-02,Coffee purchase,Cafe Aroma,220.00,UPI
+T008,C01,2026-02-05,Grocery shopping,Fresh Mart,1950.00,UPI
+T009,C01,2026-02-10,Utility bill,City Power Co,3150.00,ONLINE
+T010,C01,2026-02-15,Monthly rent,Metro Rent Mgmt,15000.00,ONLINE

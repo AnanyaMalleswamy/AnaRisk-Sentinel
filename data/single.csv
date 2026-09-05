@@ -1,0 +1,2 @@
+transaction_id,customer_id,date,description,payee,amount,channel
+T001,C11,2026-04-10,Initial payment,Unknown Merchant,15000.00,CARD

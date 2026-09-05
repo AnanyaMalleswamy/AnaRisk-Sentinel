@@ -1,0 +1,11 @@
+transaction_id,customer_id,date,description,payee,amount,channel
+T001,C03,2026-01-04,Grocery shopping,Fresh Mart,1400.00,UPI
+T002,C03,2026-01-14,Electricity bill,City Power Co,2100.00,ONLINE
+T003,C03,2026-01-25,Coffee purchase,Cafe Aroma,310.00,UPI
+T004,C03,2026-02-03,Grocery shopping,Fresh Mart,1650.00,UPI
+T005,C03,2026-02-12,Electricity bill,City Power Co,2250.00,ONLINE
+T006,C03,2026-02-22,Coffee purchase,Cafe Aroma,280.00,UPI
+T007,C03,2026-03-05,Grocery shopping,Fresh Mart,1500.00,UPI
+T008,C03,2026-03-18,Electricity bill,City Power Co,2050.00,ONLINE
+T009,C03,2026-03-29,Coffee purchase,Cafe Aroma,340.00,UPI
+T010,C03,2026-04-10,Service payment,Apex Tech Solutions,1500.00,UPI

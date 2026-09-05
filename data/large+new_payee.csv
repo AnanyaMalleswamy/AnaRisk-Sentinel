@@ -1,0 +1,11 @@
+transaction_id,customer_id,date,description,payee,amount,channel
+T001,C08,2026-01-04,Routine payment,Cafe Aroma,220.00,UPI
+T002,C08,2026-01-15,Routine payment,Fresh Mart,1600.00,UPI
+T003,C08,2026-01-28,Routine payment,City Power Co,2800.00,ONLINE
+T004,C08,2026-02-08,Routine payment,Cafe Aroma,260.00,UPI
+T005,C08,2026-02-20,Routine payment,Fresh Mart,1750.00,UPI
+T006,C08,2026-03-02,Routine payment,City Power Co,2750.00,ONLINE
+T007,C08,2026-03-16,Routine payment,Fresh Mart,1500.00,UPI
+T008,C08,2026-03-29,Routine payment,Cafe Aroma,240.00,UPI
+T009,C08,2026-04-05,Routine payment,City Power Co,2900.00,ONLINE
+T010,C08,2026-04-10,Property deposit,Vanguard Holdings,250000.00,UPI

@@ -1,0 +1,15 @@
+transaction_id,customer_id,date,description,payee,amount,channel
+T001,C12,2026-01-03,Routine payment,Cafe Aroma,200.00,UPI
+T002,C12,2026-01-10,Routine payment,Fresh Mart,1500.00,UPI
+T003,C12,2026-01-17,Routine payment,City Power Co,2500.00,ONLINE
+T004,C12,2026-01-24,Routine payment,Metro Rent Mgmt,12000.00,ONLINE
+T005,C12,2026-02-01,Routine payment,Cafe Aroma,220.00,UPI
+T006,C12,2026-02-08,Routine payment,Fresh Mart,1600.00,UPI
+T007,C12,2026-02-15,Routine payment,City Power Co,2400.00,ONLINE
+T008,C12,2026-02-22,Routine payment,Metro Rent Mgmt,12000.00,ONLINE
+T009,C12,2026-03-02,Routine payment,Cafe Aroma,210.00,UPI
+T010,C12,2026-03-10,Routine payment,Fresh Mart,1550.00,UPI
+T011,C12,2026-03-18,Routine payment,City Power Co,2600.00,ONLINE
+T012,C12,2026-03-25,Routine payment,Metro Rent Mgmt,12000.00,ONLINE
+T013,C12,2026-04-02,Routine payment,Cafe Aroma,230.00,UPI
+T014,C12,2026-04-09,Shopping purchase,Fresh Mart,4800.00,UPI

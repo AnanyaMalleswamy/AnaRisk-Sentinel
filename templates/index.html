@@ -41,13 +41,13 @@
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" id="analyze-btn" class="glow-btn btn-primary">
+                            <button type="submit" id="analyze-btn" class="glow-btn btn-ai">
                                 Run Baseline Analysis
                             </button>
-                            <button type="button" id="generate-report-btn" class="glow-btn btn-ai">
+                            <button type="button" id="generate-report-btn" class="glow-btn btn-primary">
                                 Generate AI Narrative Analysis
                             </button>
-                            <button type="button" id="generate-pdf-btn" class="glow-btn btn-pdf">
+                            <button type="button" id="generate-pdf-btn" class="glow-btn btn-ai">
                                 Download PDF Report
                             </button>
                         </div>
@@ -197,6 +197,25 @@
                 <section class="card reports-list-card">
                     <h2 class="section-title">Audited Session Log</h2>
                     <div class="reports-list" id="audited-reports-queue">
+                        <div id="audited-reports-queue">
+  <!-- High Risk Group -->
+  <div id="queue-group-high" class="queue-group">
+    <div class="queue-group-header risk-high-header">High Risk</div>
+    <div class="queue-group-items"></div>
+  </div>
+
+  <!-- Elevated Group -->
+  <div id="queue-group-elevated" class="queue-group">
+    <div class="queue-group-header risk-elevated-header">Elevated Risk</div>
+    <div class="queue-group-items"></div>
+  </div>
+
+  <!-- Low Risk Group -->
+  <div id="queue-group-low" class="queue-group">
+    <div class="queue-group-header risk-low-header">Low Risk</div>
+    <div class="queue-group-items"></div>
+  </div>
+</div>
                         <p class="placeholder-text">No active audits completed in this session.</p>
                     </div>
                 </section>

@@ -1,0 +1,11 @@
+transaction_id,customer_id,date,description,payee,amount,channel
+T001,C06,2026-01-02,Routine payment,Cafe Aroma,200.00,UPI
+T002,C06,2026-01-10,Routine payment,Fresh Mart,1200.00,UPI
+T003,C06,2026-01-20,Routine payment,City Power Co,1800.00,UPI
+T004,C06,2026-02-01,Routine payment,Cafe Aroma,250.00,UPI
+T005,C06,2026-02-12,Routine payment,Fresh Mart,1150.00,UPI
+T006,C06,2026-02-22,Routine payment,City Power Co,1900.00,UPI
+T007,C06,2026-03-03,Routine payment,Cafe Aroma,210.00,UPI
+T008,C06,2026-03-15,Routine payment,Fresh Mart,1300.00,UPI
+T009,C06,2026-04-08,Commercial transfer,Global Logistics Corp,85000.00,WIRE
+T010,C06,2026-04-09,Commercial transfer,Global Logistics Corp,92000.00,WIRE

@@ -1,0 +1,11 @@
+transaction_id,customer_id,date,description,payee,amount,channel
+T001,C07,2026-01-05,Routine payment,Cafe Aroma,150.00,UPI
+T002,C07,2026-01-12,Routine payment,Fresh Mart,1400.00,UPI
+T003,C07,2026-01-20,Routine payment,City Power Co,2100.00,UPI
+T004,C07,2026-02-02,Routine payment,Cafe Aroma,180.00,UPI
+T005,C07,2026-02-15,Routine payment,Fresh Mart,1550.00,UPI
+T006,C07,2026-02-25,Routine payment,City Power Co,2050.00,UPI
+T007,C07,2026-03-08,Routine payment,Fresh Mart,1350.00,UPI
+T008,C07,2026-04-01,Card swipe,Fresh Mart,1400.00,CARD
+T009,C07,2026-04-03,Card swipe,City Power Co,2100.00,CARD
+T010,C07,2026-04-07,Card swipe,Cafe Aroma,350.00,CARD
