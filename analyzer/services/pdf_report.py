@@ -301,17 +301,13 @@ def generate_pdf(report_data):
 
     def priority_from_data():
         priority = narrative.get("investigator_priority")
-
-        if priority:
-            return str(priority).upper()
-
-        if classification == "REVIEW_RECOMMENDED":
+        signal_count=len(signals)
+        if signal_count >= 4 or "HIGH" in str(classification).upper() or "CRITICAL" in str(classification).upper():
             return "HIGH"
-
-        if classification == "REVIEW_LIMITED_EVIDENCE":
+        elif signal_count > 1 or "ELEVATED" in str(classification).upper() or "MEDIUM" in str(classification).upper():
             return "MODERATE"
-
-        return "LOW"
+        else:
+            return "LOW"
 
     priority = priority_from_data()
 
