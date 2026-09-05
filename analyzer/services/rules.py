@@ -64,3 +64,54 @@ def detect_unusually_large_transactions(transactions, baseline):
             },
         })
     return signals
+
+#Signal 2:
+def detect_new_payee_burst(transactions, baseline):
+    signals = []
+    payees = baseline.get("payee_profile", {}).get("payees", {})
+    history_end = baseline.get("history_end")
+    if not payees or not history_end:
+        return signals
+
+    history_end_date = _parse_date(history_end)
+    recent_cutoff = history_end_date - timedelta(days=NEW_PAYEE_RECENT_THRESHOLD_DAYS)
+    typical_upper = baseline.get("amount_profile", {}).get("typical_upper") or 0
+
+    for payee_name, info in payees.items():
+        count = info["count"]
+        first_seen = _parse_date(info["first_seen"])
+        last_seen = _parse_date(info["last_seen"])
+        window_days = (last_seen - first_seen).days
+
+        if not (
+            first_seen >= recent_cutoff
+            and window_days <= NEW_PAYEE_BURST_MAX_WINDOW_DAYS
+            and count >= NEW_PAYEE_BURST_MIN_COUNT
+        ):
+            continue
+
+        matching_txns = [
+            t for t in transactions
+            if t["payee"] == payee_name and first_seen <= _parse_date(t["date"]) <= last_seen
+        ]
+        total_amount = sum(t["amount"] for t in matching_txns)
+        severity = "high" if (count >= NEW_PAYEE_BURST_MIN_COUNT + 2 or total_amount > typical_upper * 2) else "medium"
+
+        signals.append({
+            "signal_type": "NEW_PAYEE_BURST",
+            "transaction_ids": [t["transaction_id"] for t in matching_txns],
+            "severity": severity,
+            "reason": (
+                f"Payee '{payee_name}' first appeared on {first_seen.isoformat()} and received "
+                f"{count} payments within {window_days} day(s), totaling {total_amount}."
+            ),
+            "evidence": {
+                "payee": payee_name,
+                "first_seen": first_seen.isoformat(),
+                "last_seen": last_seen.isoformat(),
+                "transaction_count": count,
+                "window_days": window_days,
+                "total_amount": total_amount,
+            },
+        })
+    return signals
