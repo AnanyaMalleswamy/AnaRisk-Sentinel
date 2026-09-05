@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.tasks import signals
+
 import json
 from analyzer.services import baseline
 from analyzer.services.parser import CSVValidationError, parse_transactions_csv
