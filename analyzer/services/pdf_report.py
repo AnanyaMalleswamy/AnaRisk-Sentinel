@@ -260,3 +260,244 @@ def generate_pdf(report_data):
 
     story.append(header_table)
     story.append(Spacer(1, 10))
+
+
+
+    story.append(PageBreak())
+
+    story.append(
+        Paragraph("BEHAVIORAL EVIDENCE & REVIEW", title_style)
+    )
+
+    story.append(
+        Paragraph(
+            f"Customer {customer_id} · Evidence-backed investigation details",
+            subtitle_style,
+        )
+    )
+
+    # ---------------------------------------------------------
+    # TRANSACTIONS OF INTEREST
+    # ---------------------------------------------------------
+
+    story.append(Paragraph("TRANSACTIONS OF INTEREST", section_style))
+
+    flagged_ids = set()
+
+    for signal in signals:
+        flagged_ids.update(signal.get("transaction_ids", []))
+
+    interesting_transactions = [
+        txn for txn in transactions
+        if txn.get("transaction_id") in flagged_ids
+    ]
+
+    if interesting_transactions:
+        transaction_rows = [
+            [
+                Paragraph("<b>ID</b>", small_style),
+                Paragraph("<b>DATE</b>", small_style),
+                Paragraph("<b>PAYEE</b>", small_style),
+                Paragraph("<b>AMOUNT</b>", small_style),
+                Paragraph("<b>CHANNEL</b>", small_style),
+            ]
+        ]
+
+        for txn in interesting_transactions:
+            transaction_rows.append(
+                [
+                    Paragraph(str(txn.get("transaction_id", "")), body_style),
+                    Paragraph(str(txn.get("date", "")), body_style),
+                    Paragraph(str(txn.get("payee", "")), body_style),
+                    Paragraph(f"₹{txn.get('amount', '')}", body_style),
+                    Paragraph(str(txn.get("channel", "")), body_style),
+                ]
+            )
+
+        transaction_table = Table(
+            transaction_rows,
+            colWidths=[25 * mm, 28 * mm, 48 * mm, 32 * mm, 32 * mm],
+            repeatRows=1,
+        )
+
+        transaction_table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#172033")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                    ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#D9DEE7")),
+                    ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 5),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+                    ("TOPPADDING", (0, 0), (-1, -1), 5),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+                ]
+            )
+        )
+
+        story.append(transaction_table)
+    else:
+        story.append(
+            Paragraph(
+                "No transactions were flagged for review.",
+                body_style,
+            )
+        )
+
+    # ---------------------------------------------------------
+    # INVESTIGATION THREADS
+    # ---------------------------------------------------------
+
+    story.append(Paragraph("INVESTIGATION THREADS", section_style))
+
+    if threads:
+        for thread in threads:
+            thread_text = (
+                f"<b>{thread.get('thread_id', 'THREAD')}</b> · "
+                f"Priority: <b>{thread.get('priority', 'N/A')}</b><br/>"
+                f"Transactions: {', '.join(thread.get('transaction_ids', []))}<br/>"
+                f"Signals: {', '.join(thread.get('signal_types', []))}<br/>"
+                f"Time range: "
+                f"{thread.get('time_range', {}).get('start', 'N/A')} → "
+                f"{thread.get('time_range', {}).get('end', 'N/A')}"
+            )
+
+            thread_table = Table(
+                [[Paragraph(thread_text, body_style)]],
+                colWidths=[165 * mm],
+            )
+
+            thread_table.setStyle(
+                TableStyle(
+                    [
+                        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
+                        ("BOX", (0, 0), (-1, -1), 0.6, colors.HexColor("#D9DEE7")),
+                        ("LEFTPADDING", (0, 0), (-1, -1), 9),
+                        ("RIGHTPADDING", (0, 0), (-1, -1), 9),
+                        ("TOPPADDING", (0, 0), (-1, -1), 8),
+                        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+                    ]
+                )
+            )
+
+            story.append(thread_table)
+            story.append(Spacer(1, 5))
+    else:
+        story.append(
+            Paragraph(
+                "No investigation threads identified.",
+                body_style,
+            )
+        )
+
+    # ---------------------------------------------------------
+    # BEHAVIORAL CHANGE
+    # ---------------------------------------------------------
+
+    story.append(Paragraph("BEHAVIORAL CHANGE", section_style))
+
+    behavioral_change = narrative.get(
+        "behavioral_change",
+        "No additional behavioral change narrative was generated.",
+    )
+
+    story.append(
+        Table(
+            [[Paragraph(str(behavioral_change), body_style)]],
+            colWidths=[165 * mm],
+            style=TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
+                    ("BOX", (0, 0), (-1, -1), 0.6, colors.HexColor("#D9DEE7")),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 9),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 9),
+                    ("TOPPADDING", (0, 0), (-1, -1), 8),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+                ]
+            ),
+        )
+    )
+
+    # ---------------------------------------------------------
+    # RECOMMENDED REVIEW
+    # ---------------------------------------------------------
+
+    story.append(Paragraph("RECOMMENDED REVIEW", section_style))
+
+    recommendations = narrative.get("recommended_review", [])
+
+    if recommendations:
+        for recommendation in recommendations:
+            story.append(
+                Paragraph(
+                    f"□  {recommendation}",
+                    body_style,
+                )
+            )
+            story.append(Spacer(1, 4))
+    else:
+        story.append(
+            Paragraph(
+                "No additional review actions were generated.",
+                body_style,
+            )
+        )
+
+    # ---------------------------------------------------------
+    # DISCLAIMER / FOOTER
+    # ---------------------------------------------------------
+
+    story.append(Spacer(1, 10))
+
+    disclaimer = (
+        "<b>INVESTIGATOR NOTE</b><br/>"
+        "This report identifies behavioral anomalies and supporting evidence "
+        "for investigator review. It does not establish that fraud occurred. "
+        "Final judgment remains with the investigator."
+    )
+
+    story.append(
+        Table(
+            [[Paragraph(disclaimer, small_style)]],
+            colWidths=[165 * mm],
+            style=TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F3F5F8")),
+                    ("BOX", (0, 0), (-1, -1), 0.6, colors.HexColor("#D9DEE7")),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 9),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 9),
+                    ("TOPPADDING", (0, 0), (-1, -1), 8),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+                ]
+            ),
+        )
+    )
+
+    def add_page_number(canvas, document):
+        canvas.saveState()
+
+        canvas.setFont("Helvetica", 7)
+        canvas.setFillColor(colors.HexColor("#687386"))
+
+        canvas.drawString(
+            16 * mm,
+            8 * mm,
+            "Transaction Risk Investigation Assistant · PS06",
+        )
+
+        canvas.drawRightString(
+            A4[0] - 16 * mm,
+            8 * mm,
+            f"Page {document.page}",
+        )
+
+        canvas.restoreState()
+
+    doc.build(
+        story,
+        onFirstPage=add_page_number,
+        onLaterPages=add_page_number,
+    )
+
+    buffer.seek(0)
+    return buffer
