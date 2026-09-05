@@ -99,3 +99,27 @@ def build_evidence_payload(customer_id, transactions, baseline, signals, threads
 
 def _extract_referenced_ids(text):
     return set(_ID_TOKEN_PATTERN.findall(text or ""))
+
+
+def validate_narrative_traceability(narrative, valid_transaction_ids):
+    """Returns the set of any transaction-ID-shaped tokens Gemini mentioned
+    that were NOT in the evidence it was given. Empty set = clean."""
+    referenced = set()
+    referenced |= _extract_referenced_ids(narrative.get("assessment", ""))
+    for finding in narrative.get("key_findings", []):
+        referenced |= _extract_referenced_ids(finding)
+    referenced |= _extract_referenced_ids(narrative.get("behavioral_change", ""))
+    referenced |= _extract_referenced_ids(narrative.get("investigator_priority", ""))
+    for step in narrative.get("recommended_review", []):
+        referenced |= _extract_referenced_ids(step)
+    return referenced - set(valid_transaction_ids)
+
+
+def _get_client():
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        raise GeminiConfigError(
+            "GEMINI_API_KEY is not set. Add it to your .env file before generating a report."
+        )
+    return genai.Client(api_key=api_key)
+
